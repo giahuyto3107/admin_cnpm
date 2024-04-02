@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tìm kiếm sản phẩm</title>
+  <script>
+    function searchProduct() {
+      let keyword = document.getElementById('search-input').value;
+      let apiUrl = `http://localhost:8080/api/v1/products?search=${keyword}`;
+
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          // Xử lý dữ liệu tìm kiếm ở đây
+        })
+        .catch(error => {
+          console.log('Có lỗi xảy ra:', error);
+        });
+    }
+  </script>
+</head>
+<body>
+  <h1>Tìm kiếm sản phẩm</h1>
+  <div>
+    <input type="text" id="search-input" placeholder="Nhập từ khóa tìm kiếm">
+    <button onclick="searchProduct()">Tìm kiếm</button>
+  </div>
+</body>
+</html>
