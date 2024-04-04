@@ -114,7 +114,7 @@ select {
 .menu .title {
     font-size: 10px;
     font-weight: 600;
-    color: var(--light-gray);
+    color: #C92127;
     text-transform: uppercase;
     margin-bottom: 10px;
 }
@@ -126,11 +126,11 @@ select {
     top:10px;
     text-align: center;
     justify-content: center;
-    color: #fff;
+    color: #C92127;
     font-size: 30px;
 }
 .user-details .color{
-    color: var(--red);
+    color: #C92127;
 }
 
 .menu .slide{
@@ -152,7 +152,7 @@ select {
     gap: 10px;
     font-size: 14px;
     font-weight: 500;
-    color: var(--lightest-gray);
+    color: #C92127;
     text-decoration: none;
     padding: 12px 8px;
     border-radius: 8px;
@@ -269,7 +269,7 @@ content .top-sidebar{
     display: flex;
     justify-content:flex-end;
     align-items: center;
-    background-color: var(--dark-gray);
+    background-color: #C92127;
     border-radius: 40px;
 }
 .title-mainpage{
@@ -328,7 +328,7 @@ content .top-sidebar{
 .page-title {
     text-align: center;
     padding: 0.5rem;
-    background-color: var(--lighter-gray);
+    background-color: #C92127;
     color: var(--dark-gray);
     text-transform: uppercase;
 }
@@ -397,7 +397,7 @@ content .top-sidebar{
 .cards .card-single:hover .box {
     transform: translateY(-10px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(45deg, rgb(21, 21, 21), rgb(33, 31, 31));
+    background: linear-gradient(45deg, #C92127, whitesmoke);
 }
 
 .cards .card-single .box .on-box {
@@ -504,7 +504,7 @@ content .top-sidebar{
   
   .cards .card-single .flip-card h3 {
     font-size: 1.5rem;
-    color: var(--dark-gray);
+    color: #C92127;
     z-index: 2;
     transition: 0.3s;
     margin-bottom: 10px;
@@ -644,7 +644,7 @@ tbody tr td {
     padding: 20px 80px;
 }
 .btn-control-large{
-    background-color: var(--dark-gray);
+    background-color: #C92127;
     height: 40px;
     color: #fff;
     border-radius: 5px;
@@ -1172,7 +1172,7 @@ label a {
 
 .form-submit {
     height: 40px;
-    background-color: var(--dark-gray);
+    background-color: #C92127;
     color: #fff;
     padding: 10px 30px;
     border-radius: 5px;
@@ -1183,7 +1183,7 @@ label a {
 
 .form-submit4{
     height: 50px;
-    background-color: var(--dark-gray);
+    background-color: #C92127;
     color: #fff;
     padding: 10px 30px;
     border-radius: 5px;
@@ -1199,7 +1199,7 @@ label a {
 }
 .form-submit1 {
     height: 50px;
-    background-color: var(--dark-gray);
+    background-color: #C92127;
     color: #fff;
     padding: 10px 30px;
     border-radius: 5px;
@@ -1211,7 +1211,7 @@ label a {
 
 .form-submit2 {
     height: 50px;
-    background-color: var(--dark-gray);
+    background-color: #C92127;
     color: #fff;
     padding: 10px 30px;
     border-radius: 5px;
@@ -1252,7 +1252,7 @@ input[type="file"] {
 }
 
 .form-label-file {
-    background-color: var(--dark-gray);
+    background-color: #C92127;
     color: #fff;
     padding: 8px 40px;
     text-align: center;
