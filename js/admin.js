@@ -1,5 +1,5 @@
 const postApi = 'http://localhost:8080/api/v1/products';
-
+// const apiUrl = `http://localhost:8080/api/v1/products?search=${keyword}`;
 $(".menu-btn").click(function(){
     $(".sidebar").toggleClass("active");
 })
@@ -70,21 +70,12 @@ document.getElementById("doanh-thu").innerHTML = vnd(getMoney());
 function vnd(price) {
     return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 }
-// Phân trang 
-let perPage = 8;
-let currentPage = 1;
-let totalPage = 0;
-let perProducts = [];
-// Số sản phẩm mỗi trang
-const productsPerPage = 6;
 
-function displayList(productAll, perPage, currentPage,postApi) {
+
+function displayList(productAll,postApi) {
     fetch(postApi)
     .then(res => res.json())
     .then(data => {
-        let start = (currentPage - 1) * perPage;
-        let end = (currentPage - 1) * perPage + perPage;
-        let productShow = productAll.slice(start, end);
         showProductArr(data.content);
     })
     .catch(error => {
@@ -138,6 +129,20 @@ function showProductArr(arr) {
     document.getElementById("show-product").innerHTML = productHtml;
 }
 
+// function searchProduct(keyword) {
+//     let apiUrl = `http://localhost:8080/api/v1/products?search=${keyword}`;
+
+//     fetch(apiUrl)
+//       .then(response => response.json())
+//       .then(data => {
+//         displayResults(data);
+//       })
+//       .catch(error => {
+//         console.log('Có lỗi xảy ra:', error);
+//       });
+//   }
+
+
 function showProduct() {
     
     let selectOp = document.getElementById('the-loai').value;
@@ -152,18 +157,24 @@ function showProduct() {
         result = products.filter((item) => item.category == selectOp);
     }
 
-    result = valeSearchInput == "" ? result : result.filter(item => {
+
+    //search san pham
+    // if (valeSearchInput === "") {
+    //     displayList(result, postApi);
+    //   } else {
+    //     searchProduct(result);
+    //   }
+      result = valeSearchInput == "" ? result : result.filter(item => {
         return item.title.toString().toUpperCase().includes(valeSearchInput.toString().toUpperCase());
-    })
-    
-    displayList(result, perPage, currentPage, postApi);
+        })  
+     displayList(result,postApi);
 }
 
 function cancelSearchProduct() {
     let products = localStorage.getItem("products") ? JSON.parse(localStorage.getItem("products")).filter(item => item.status == 1) : [];
     document.getElementById('the-loai').value = "Tất cả";
     document.getElementById('form-search-product').value = "";
-    displayList(products, perPage, currentPage,postApi);
+    displayList(products,postApi);
 }
 
 window.onload = showProduct();

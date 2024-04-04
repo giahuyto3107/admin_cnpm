@@ -92,7 +92,7 @@ select {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background-color: var(--dark-gray);
+    background-color:whitesmoke;
     padding: 24px;
     transition: all 0.3s;
 }

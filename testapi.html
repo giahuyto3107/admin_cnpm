@@ -10,12 +10,27 @@
       fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-          console.log(data);
-          // Xử lý dữ liệu tìm kiếm ở đây
+          displayResults(data);
         })
         .catch(error => {
           console.log('Có lỗi xảy ra:', error);
         });
+    }
+
+    function displayResults(data) {
+      let resultList = document.getElementById('results-list');
+      
+      // Xóa các phần tử trong danh sách trước khi cập nhật dữ liệu mới
+      resultList.innerHTML = '';
+
+      // Tạo các phần tử danh sách
+      for (let i = 0; i < data.length; i++) {
+        let product = data[i];
+
+        let listItem = document.createElement('li');
+        listItem.textContent = `ID: ${product.id}, Tên sản phẩm: ${product.product_name}`;
+        resultList.appendChild(listItem);
+      }
     }
   </script>
 </head>
@@ -25,5 +40,8 @@
     <input type="text" id="search-input" placeholder="Nhập từ khóa tìm kiếm">
     <button onclick="searchProduct()">Tìm kiếm</button>
   </div>
+  <ul id="results-list">
+    <!-- Danh sách kết quả tìm kiếm sẽ được tạo và cập nhật tại đây -->
+  </ul>
 </body>
 </html>
