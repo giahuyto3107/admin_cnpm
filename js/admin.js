@@ -1,5 +1,56 @@
-const postApi = 'http://localhost:8080/api/v1/products';
-// const apiUrl = `http://localhost:8080/api/v1/products?search=${keyword}`;
+function login() {
+    fetch('http://localhost:8080/api/v1/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: 'admin@sgu.edu.vn',
+        password: '123456',
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        const accessToken = data.content.access_token;
+        //LƯU TOKEN VÀO LOCAL STORAGE
+        localStorage.setItem('accessToken', accessToken);
+        console.log('Token saved to localStorage:', accessToken);
+      })
+      .catch(error => {
+        console.error('Login failed:', error);
+      });
+  }
+
+function getData() {
+    // Lấy token từ localStorage
+    const accessToken = localStorage.getItem('accessToken');
+  
+    // Kiểm tra xem có token trong localStorage hay không
+    if (!accessToken) {
+      console.error('Token not found in localStorage');
+      return;
+    }
+  
+    fetch('http://localhost:8080/api/v1/products', {
+      //SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        token: accessToken,
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Data thành phần: ', data.content);
+        return data.content;
+      })
+      .catch(error => {
+        console.error('Failed to fetch data:', error);
+      });
+  }
+
+getData();
+
 $(".menu-btn").click(function(){
     $(".sidebar").toggleClass("active");
 })
@@ -23,19 +74,10 @@ for(let i=0;i<closeBtn.length;i++){
         sidebars.classList.add("open");
     })
 }
-fetch(postApi)
-  .then(res => res.json())
-  .then(data => {
-    console.log(data.content);
-  })
-    .catch(error => {
-    console.log('Lỗi:', error);
-  });
-
 
 // Get amount product
 function getAmoumtProduct() {
-    fetch(postApi)
+    fetch('http://localhost:8080/api/v1/products')
       .then(res => res.json())
       .then(data => {
         const amount = data.content.length;
@@ -44,7 +86,8 @@ function getAmoumtProduct() {
       .catch(error => {
         console.log('Lỗi:', error);
       });
-  }
+}
+
 // Get amount user
 function getAmoumtUser() {
     let accounts = localStorage.getItem("accounts") ? JSON.parse(localStorage.getItem("accounts")) : [];
@@ -61,7 +104,6 @@ function getMoney() {
     return tongtien;
 }
 
-document.getElementById("amount-user").innerHTML = getAmoumtUser();
 document.getElementById("amount-product").innerHTML = getAmoumtProduct();
 document.getElementById("doanh-thu").innerHTML = vnd(getMoney());
 
@@ -71,19 +113,84 @@ function vnd(price) {
     return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 }
 
-
-function displayList(productAll,postApi) {
-    fetch(postApi)
-    .then(res => res.json())
-    .then(data => {
-        showProductArr(data.content);
+function displayList(productAll) {
+    // Lấy token từ localStorage
+    const accessToken = localStorage.getItem('accessToken');
+    // Kiểm tra xem có token trong localStorage hay không
+    if (!accessToken) {
+      console.error('Token not found in localStorage');
+      return;
+    }
+  
+    fetch('http://localhost:8080/api/v1/products', {
+      //SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        token: accessToken,
+      },
     })
-    .catch(error => {
-      console.log('Lỗi:', error);
-    });
+      .then(response => response.json())
+      .then(data => {
+        showProductArr(data.content);
+      })
+      .catch(error => {
+        console.error('Failed to fetch data:', error);
+      });
     
 }
 
+function displayListSearch(productAll, keyword) {
+    // Lấy token từ localStorage
+    const accessToken = localStorage.getItem('accessToken');
+    // Kiểm tra xem có token trong localStorage hay không
+    if (!accessToken) {
+      console.error('Token not found in localStorage');
+      return;
+    }
+  
+    const url = `http://localhost:8080/api/v1/products?search=${encodeURIComponent(keyword)}`;
+  
+    fetch(url, {
+      // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        token: accessToken,
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        showProductArr(data.content);
+      })
+      .catch(error => {
+        console.error('Failed to fetch data:', error);
+      });
+  }
+
+  function fetchDataCategory(id) {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      console.error('Token not found in localStorage');
+      return;
+    }
+  
+    fetch(`http://localhost:8080/api/v1/categories/category/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        token: accessToken,
+      },
+    })
+      .then(response => response.json())
+      .then(categoryData => {
+        console.log(categoryData.content.name)
+        return categoryData.content.name;
+      })
+      .catch(error => {
+        console.error('Failed to fetch category data:', error);
+      });
+  }
 // Hiển thị danh sách sản phẩm 
 function showProductArr(arr) {
     let productHtml = "";
@@ -105,9 +212,9 @@ function showProductArr(arr) {
             <div class="list-left">
               <img src="${product.image}" alt="">
               <div class="list-info">
-                <p>${product.product_name}</p>
+                <h4>${product.product_name}</h4>
                 <p class="list-note">${product.publisher_name}</p>
-                <span class="list-category">${product.quantity}</span>
+                <span class="list-category">${product.category_names}</span>
               </div>
             </div>
             <div class="list-right">
@@ -129,52 +236,27 @@ function showProductArr(arr) {
     document.getElementById("show-product").innerHTML = productHtml;
 }
 
-// function searchProduct(keyword) {
-//     let apiUrl = `http://localhost:8080/api/v1/products?search=${keyword}`;
-
-//     fetch(apiUrl)
-//       .then(response => response.json())
-//       .then(data => {
-//         displayResults(data);
-//       })
-//       .catch(error => {
-//         console.log('Có lỗi xảy ra:', error);
-//       });
-//   }
-
-
 function showProduct() {
-    
     let selectOp = document.getElementById('the-loai').value;
     let valeSearchInput = document.getElementById('form-search-product').value;
     let products = localStorage.getItem("products") ? JSON.parse(localStorage.getItem("products")) : [];
-
-    if(selectOp == "Tất cả") {
-        result = products.filter((item) => item.status == 1);
-    } else if(selectOp == "Đã xóa") {
-        result = products.filter((item) => item.status == 0);
+  
+    let result;
+  
+    if (valeSearchInput === "") {
+      result = products;
+      displayList(result);
     } else {
-        result = products.filter((item) => item.category == selectOp);
+      displayListSearch(result,valeSearchInput);
     }
-
-
-    //search san pham
-    // if (valeSearchInput === "") {
-    //     displayList(result, postApi);
-    //   } else {
-    //     searchProduct(result);
-    //   }
-      result = valeSearchInput == "" ? result : result.filter(item => {
-        return item.title.toString().toUpperCase().includes(valeSearchInput.toString().toUpperCase());
-        })  
-     displayList(result,postApi);
-}
-
+  }
+  
 function cancelSearchProduct() {
     let products = localStorage.getItem("products") ? JSON.parse(localStorage.getItem("products")).filter(item => item.status == 1) : [];
     document.getElementById('the-loai').value = "Tất cả";
     document.getElementById('form-search-product').value = "";
-    displayList(products,postApi);
+    displayList(products, perPage, currentPage);
+    setupPagination(products, perPage, currentPage);
 }
 
 window.onload = showProduct();

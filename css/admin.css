@@ -328,7 +328,7 @@ content .top-sidebar{
 .page-title {
     text-align: center;
     padding: 0.5rem;
-    background-color: #C92127;
+    background-color: var(--lighter-gray);
     color: var(--dark-gray);
     text-transform: uppercase;
 }
@@ -1616,3 +1616,22 @@ input[type="file"] {
     }
 }
 
+.buttonchangestatus button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .buttonchangestatus button:hover {
+    background-color: #405c6f;
+  }
+  
+  .daduyet{
+    background-color: rgb(0, 255, 0);
+  }
+  .dahuy{
+    background-color: red;
+  }

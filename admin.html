@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href='https://fontawesome.com/search?q=sort&o=r' rel='stylesheet'>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
     <title>Quản lý cửa hàng</title>
 </head>
 
@@ -52,28 +51,78 @@
                                
                             </a>
                         </li>
+
                         <li class="sidebar-list-item tab-content">
                             <a href="#">
                                 <i class="material-symbols-outlined">
                                     groups
                                     </i>
-                                <span class="text">KHÁCH HÀNG</span>
+                                <span class="text">TÀI KHOẢN</span>
                             </a>
                         </li>
-                       <li class="sidebar-list-item tab-content">
+
+                        <li class="sidebar-list-item tab-content">
                             <a href="#">
                                 <i class="material-symbols-outlined">
                                     shopping_cart
                                     </i>
                                 <span class="text">ĐƠN HÀNG</span>
                             </a>
-                        </li>  
+                        </li>
+
                         <li class="sidebar-list-item tab-content">
                             <a href="#">
                                 <i class="material-symbols-outlined">
-                                    show_chart
+                                    category
                                     </i>
-                            <span class="text">THỐNG KÊ</span>
+                                <span class="text">THUỘC TÍNH</span>
+                               
+                            </a>
+                        </li>
+
+                        <li class="sidebar-list-item tab-content">
+                            <a href="#">
+                                <i class="material-symbols-outlined">
+                                    task
+                                    </i>
+                                <span class="text">PHIẾU NHẬP</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-list-item tab-content">
+                            <a href="#">
+                                <i class="material-symbols-outlined">
+                                    money
+                                    </i>
+                                <span class="text">KHUYẾN MÃI</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-list-item tab-content">
+                            <a href="#">
+                                <i class="material-symbols-outlined">
+                                    house
+                                    </i>
+                                <span class="text">NHÀ XUẤT BẢN</span>
+                               
+                            </a>
+                        </li>
+
+                        <li class="sidebar-list-item tab-content">
+                            <a href="#">
+                                <i class="material-symbols-outlined">
+                                    person
+                                    </i>
+                                <span class="text">TÁC GIẢ</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-list-item tab-content">
+                            <a href="#">
+                                <i class="material-symbols-outlined">
+                                    shop
+                                    </i>
+                                <span class="text">NHÀ CUNG CẤP</span>
                             </a>
                         </li>
                     </ul>
@@ -176,12 +225,10 @@
                     <div class="admin-control-left">
                         <select name="the-loai" id="the-loai" onchange="showProduct()">
                             <option>Tất cả</option>
-                            <option>Nike</option>
-                            <option>Jordan</option>
-                            <option>Adidas</option>
-                            <option>Converse</option>
-                            <option>Vans</option>
-                            <option>Khác</option>
+                            <option>Tâm lý học</option>
+                            <option>Tâm linh - tôn giáo</option>
+                            <option>Lịch sử Việt Nam</option>
+                            <option>Ngôn tình</option>
                             <option>Đã xóa</option>
                         </select>
                     </div>
@@ -262,11 +309,6 @@
                         </tbody>
                     </table> 
                 </div>
-                <div class="graphBox1">
-                        <div class="box1">
-                            <canvas id="myChart1" ></canvas>
-                        </div>
-                    </div> 
                 </div>
                 <!-- </div> -->
             </div>
@@ -274,34 +316,17 @@
             <div class="section">
                 <div class="admin-control">
                     <div class="admin-control-left">
-                        <select name="tinh-trang" id="tinh-trang" onchange="findOrder()">
-                            <option value="2">Tất cả</option>
-                            <option value="1">Đã xử lý</option>
-                            <option value="0">Chưa xử lý</option>
-                        </select>
+                        
                     </div>
                     <div class="admin-control-center">
                         <form action="" class="form-search">
                             <span class="search-btn"><i class="material-symbols-outlined">
                                 search
                                 </i></span>
-                            <input id="form-search-order" type="text" class="form-search-input" placeholder="Tìm kiếm mã đơn, khách hàng..." oninput="findOrder()">
+                            <input id="form-search-order" type="text" class="form-search-input" placeholder="Tìm kiếm mã đơn, khách hàng..." oninput="searchBillByID()">
                         </form>
                     </div>
-                    <div class="admin-control-right">
-                        <form action="" class="fillter-date">
-                            <div>
-                                <label for="time-start">Từ</label>
-                                <input type="date" class="form-control-date" id="time-start" onchange="findOrder()">
-                            </div>
-                            <div>
-                                <label for="time-end">Đến</label>
-                                <input type="date" class="form-control-date" id="time-end" onchange="findOrder()">
-                            </div>
-                        </form>      
-                        <button class="btn-reset-order" onclick="cancelSearchOrder()"><i class="material-symbols-outlined">
-                            restart_alt
-                            </i></button>               
+                    <div class="admin-control-right">            
                     </div>
                 </div>
                 <div class="table">
@@ -312,8 +337,9 @@
                                 <td>Khách hàng</td>
                                 <td>Ngày đặt</td>
                                 <td>Tổng tiền</td>
+                                <td>Địa chỉ</td>
                                 <td>Trạng thái</td>
-                                <td>Thao tác</td>
+                                <td>Cập nhật trạng thái</td>
                             </tr>
                         </thead>
                         <tbody id="showOrder">
@@ -414,15 +440,6 @@
                         <tbody id="showTk">
                         </tbody>
                     </table>
-                </div>
-                 <!--Chart-->
-                 <div class="graphBox">
-                    <div class="box">
-                        <canvas id="myChart" ></canvas>
-                    </div>
-                    <div class="box2">
-                        <canvas id="myChart2" ></canvas>
-                    </div>
                 </div>
             </div>
             </div>
@@ -567,7 +584,227 @@
             </div>
         </div>
     </div>
-    
+    <script>
+        function login() {
+  fetch('http://localhost:8080/api/v1/users/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: 'admin@sgu.edu.vn',
+      password: '123456',
+    }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      const accessToken = data.content.access_token;
+      //LƯU TOKEN VÀO LOCAL STORAGE
+      localStorage.setItem('accessToken', accessToken);
+      console.log('Token saved to localStorage:', accessToken);
+    })
+    .catch(error => {
+      console.error('Login failed:', error);
+    });
+}
+    login();
+        // Fetch data from the API and show orders
+        function fetchDataAndShowOrder() {
+            // Get the access token from localStorage
+            const accessToken = localStorage.getItem('accessToken');
+
+            // Check if the access token exists
+            if (!accessToken) {
+                console.error('Token not found in localStorage');
+                return;
+            }
+
+            // Fetch data from the API
+            fetch('http://localhost:8080/api/v1/bills', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    token: accessToken,
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    let orderHtml = "";
+                    if (data.content.length === 0) {
+                        orderHtml = `<tr><td colspan="6">Không có dữ liệu</td></tr>`;
+                    } else {
+                        data.content.forEach(item => {
+
+                            //let status = item.bill_status_id === 10 ? '<span class="status-no-complete">Chua xử lý</span>' : '<span class="status-complete">Da xử lý</span>';
+                            let date = formatDate(item.date_create);
+
+                            orderHtml += `
+                            <tr>
+                                <td>${item.id}</td>
+                                <td>${item.fullname}</td>
+                                <td>${date}</td>
+                                <td>${vnd(item.total_price)}</td>
+                                <td>${item.address}</td>
+                                <td class='status'>${item.status}</td>
+                                <td class='buttonchangestatus'>
+                                    <button class='daduyet' onclick="updateBillStatus(2, ${item.id})">Duyệt đơn hàng</button>
+                                    <button class='dahuy' onclick="updateBillStatus(3, ${item.id})">Hủy đơn</button>
+            </td>
+                            </tr>`;
+                        });
+                    }
+                    document.getElementById("showOrder").innerHTML = orderHtml;
+                })
+                .catch(error => {
+                    console.error('Failed to fetch data:', error);
+                });
+        }
+
+
+        // Format the date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Format currency value in VND
+        function vnd(amount) {
+            const formatter = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
+            return formatter.format(amount);
+        }
+        function updateBillStatus(newStatus, billId) {
+            // Get the access token from localStorage
+            const accessToken = localStorage.getItem('accessToken');
+
+            // Check if the access token exists
+            if (!accessToken) {
+                console.error('Token not found in localStorage');
+                return;
+            }
+
+            // Get the bill ID from the user input
+
+
+            // Data to be sent in the request body
+            const updateData = {
+                bill_status_id: newStatus,
+            };
+
+            // Send request to update bill status
+            fetch(`http://localhost:8080/api/v1/bills/bill/${billId}`, {
+                method: 'PUT', // or 'PATCH' depending on the API requirement
+                headers: {
+                    'Content-Type': 'application/json',
+                    token: accessToken,
+                },
+                body: JSON.stringify(updateData),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to update bill status');
+                    }
+                    // Reload trang khi cập nhật thành công
+                    location.reload();
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Kết quả cập nhật trạng thái đơn hàng:', data);
+                    // Process the update result here
+                })
+                .catch(error => {
+                    console.error('Failed to update bill status:', error);
+                });
+        }
+
+        function findOrder() {
+            // Lấy giá trị được chọn từ dropdown
+            const selectedValue = document.getElementById('tinh-trang').value;
+
+            // Lấy tất cả các hàng đơn hàng
+            const orderRows = document.querySelectorAll('#showOrder tr');
+
+            // Duyệt qua từng hàng đơn hàng và ẩn hoặc hiển thị tùy thuộc vào giá trị được chọn
+            orderRows.forEach(row => {
+                const statusElement = row.querySelector('.status');
+                const status = statusElement.getAttribute('data-status');
+
+                // Nếu giá trị được chọn là '0' (Tất cả) hoặc giá trị được chọn trùng với giá trị của phần tử, hiển thị hàng đơn hàng
+                if (selectedValue === '0' || selectedValue === status) {
+                    row.style.display = 'table-row';
+                } else {
+                    // Ngược lại, ẩn hàng đơn hàng
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+
+        function searchAndUpdateOrder(event) {
+            // Check if Enter key is pressed (for search)
+            if (event.keyCode === 13) {
+                searchBillByID();
+            } else {
+                fetchDataAndShowOrder();
+            }
+        }
+
+        function searchBillByID() {
+            // Get the access token from localStorage
+            const accessToken = localStorage.getItem('accessToken');
+
+            // Check if the access token exists
+            if (!accessToken) {
+                console.error('Token not found in localStorage');
+                return;
+            }
+
+            // Get the bill ID from the user input
+            const searchInput = document.getElementById('form-search-order');
+            const billId = searchInput.value.trim();
+
+            // Fetch data from the API
+            fetch(`http://localhost:8080/api/v1/bills/bill/${billId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    token: accessToken,
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Kết quả tìm kiếm bằng mã đơn hàng:', data.content);
+
+                    // Update the HTML element with the search result
+                    const searchResultElement = document.getElementById('search-result');
+                    searchResultElement.textContent = `Kết quả tìm kiếm: ${data.content}`;
+
+                    // Call the function to fetch and show the order data
+                    if (data.content) {
+                        fetchDataAndShowOrder();
+                    } else {
+                        // Clear the order list if no search result is found
+                        const showOrderElement = document.getElementById('showOrder');
+                        showOrderElement.innerHTML = '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Failed to fetch data:', error);
+                });
+        }
+        // Add keydown event listener to the search input
+
+        const searchInput = document.getElementById('form-search-order');
+        searchInput.addEventListener('keydown', searchBillByID);
+
+
+
+        // Call the function to fetch data and show orders when the document is loaded
+        document.addEventListener('DOMContentLoaded', fetchDataAndShowOrder);
+    </script>
     <div id="toast"></div>
     
     <!-- Jquery -->
@@ -575,11 +812,7 @@
     src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.js"
     integrity="sha512-8Z5++K1rB3U+USaLKG6oO8uWWBhdYsM3hmdirnOEWp8h2B1aOikj5zBzlXs8QOrvY9OxEnD2QDkbSKKpfqcIWw=="
     crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/js/admin.js"></script>
-    <script src="/js/chart.js"></script>
-    <script src="/js/initial.js"></script>
     <script src="/js/toast-message.js"></script>
 </body>
 </html>

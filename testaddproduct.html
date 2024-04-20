@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Thêm sản phẩm mới</title>
+</head>
+<body>
+  <h1>Thêm sản phẩm mới</h1>
+  <form id="productForm">
+    <label for="name">Tên sản phẩm:</label>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="publisher_id">Nhà xuất bản:</label>
+    <select id="publisher_id" name="publisher_id" required>
+    </select><br><br>
+
+    <label for="image">Hình ảnh (URL):</label>
+    <input type="text" id="image" name="image" required><br><br>
+
+    <label for="price">Giá:</label>
+    <input type="number" id="price" name="price" required><br><br>
+
+    <label for="discount">Giảm giá:</label>
+    <input type="number" id="discount" name="discount" required><br><br>
+
+    <label for="category_ids">Danh mục:</label>
+<select id="category_ids" name="category_ids[]" multiple required>
+</select><br><br>
+
+
+    <label for="author_ids">Tác giả:</label>
+    <select id="author_ids" name="author_ids[]" multiple required>
+    </select><br><br>
+
+    <button type="submit">Thêm sản phẩm</button>
+  </form>
+
+  <script>
+    function getDataPublisher() {
+  const accessToken = localStorage.getItem('accessToken');
+  
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+  
+  fetch('http://localhost:8080/api/v1/publishers/', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      return response.json();
+    })
+    .then(data => {
+      const selectElement = document.getElementById('publisher_id');
+      
+      // Xóa các phần tử cũ trong thẻ <select>
+      selectElement.innerHTML = '';
+      
+      // Tạo các phần tử <option> mới dựa trên dữ liệu danh mục
+      data.content.forEach(publisher => {
+        const optionElement = document.createElement('option');
+        optionElement.value = publisher.id;
+        optionElement.textContent = publisher.name;
+        selectElement.appendChild(optionElement);
+      });
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+    });
+}
+getDataPublisher();
+
+ function getDataCategories() {
+  const accessToken = localStorage.getItem('accessToken');
+  
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+  
+  fetch('http://localhost:8080/api/v1/categories', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      return response.json();
+    })
+    .then(data => {
+      const selectElement = document.getElementById('category_ids');
+      
+      // Xóa các phần tử cũ trong thẻ <select>
+      selectElement.innerHTML = '';
+      
+      // Tạo các phần tử <option> mới dựa trên dữ liệu danh mục
+      data.content.forEach(category => {
+        const optionElement = document.createElement('option');
+        optionElement.value = category.id;
+        optionElement.textContent = category.name;
+        selectElement.appendChild(optionElement);
+      });
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+    });
+}
+getDataCategories();
+
+function getDataAuthors() {
+  const accessToken = localStorage.getItem('accessToken');
+  
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+  
+  fetch('http://localhost:8080/api/v1/authors', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      return response.json();
+    })
+    .then(data => {
+      const selectElement = document.getElementById('author_ids');
+      
+      // Xóa các phần tử cũ trong thẻ <select>
+      selectElement.innerHTML = '';
+      
+      // Tạo các phần tử <option> mới dựa trên dữ liệu danh mục
+      data.content.forEach(author => {
+        const optionElement = document.createElement('option');
+        optionElement.value = author.id;
+        optionElement.textContent = author.name;
+        selectElement.appendChild(optionElement);
+      });
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+    });
+}
+getDataAuthors();
+
+ function addProduct(event) {
+  event.preventDefault();
+
+  const nameInput = document.getElementById('name');
+  const publisherIdInput = document.getElementById('publisher_id');
+  const imageInput = document.getElementById('image');
+  const priceInput = document.getElementById('price');
+  const discountInput = document.getElementById('discount');
+  const categoryIdsSelect = document.getElementById('category_ids');
+  const authorIdsSelect = document.getElementById('author_ids');
+
+  const newProduct = {
+    name: nameInput.value,
+    publisher_id: publisherIdInput.value,
+    image: imageInput.value,
+    price: parseFloat(priceInput.value),
+    discount: parseFloat(discountInput.value),
+    category_ids: Array.from(categoryIdsSelect.selectedOptions, option => option.value),
+    author_ids: Array.from(authorIdsSelect.selectedOptions, option => option.value)
+  };
+
+  const accessToken = localStorage.getItem('accessToken');
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  fetch('http://localhost:8080/api/v1/products/product', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'token': accessToken,
+    },
+    body: JSON.stringify(newProduct)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Data gốc:', data);
+      console.log('Data thành phần:', data.content);
+      alert('Thêm sản phẩm thành công');
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+      alert('Thêm sản phẩm thất bại');
+    });
+}
+
+const productForm = document.getElementById('productForm');
+productForm.addEventListener('submit', addProduct);
+  </script>
+</body>
+</html>
