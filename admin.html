@@ -255,38 +255,16 @@
                     </ul>
                 </div>
             </div>
+
+
             <!-- Account  -->
             <div class="section">
                 <div class="admin-control">
-                    <div class="admin-control-left">
-                        <select name="tinh-trang-user" id="tinh-trang-user" onchange="showUser()">
-                            <option value="2">Tất cả</option>
-                            <option value="1">Hoạt động</option>
-                            <option value="0">Bị khóa</option>
-                        </select>
-                    </div>
-                    <div class="admin-control-center">
-                        <form action="" class="form-search">
-                            <span class="search-btn"><i class="material-symbols-outlined">
-                                search
-                                </i></i></span>
-                            <input id="form-search-user" type="text" class="form-search-input" placeholder="Tìm kiếm khách hàng..." oninput="showUser()">
-                        </form>
-                    </div>
+
+                    
                     <div class="admin-control-right">
-                        <form action="" class="fillter-date">
-                            <div>
-                                <label for="time-start">Từ</label>
-                                <input type="date" class="form-control-date" id="time-start-user" onchange="showUser()">
-                            </div>
-                            <div>
-                                <label for="time-end">Đến</label>
-                                <input type="date" class="form-control-date" id="time-end-user" onchange="showUser()">
-                            </div>
                         </form>      
-                        <button class="btn-reset-order" onclick="cancelSearchUser()"><i class="material-symbols-outlined">
-                            restart_alt
-                            </i></button>     
+    
                         <button id="btn-add-user" class="btn-control-large" onclick="openCreateAccount()"><i class="material-symbols-outlined">
                             add
                             </i> <span>Thêm khách hàng</span></button>          
@@ -299,8 +277,6 @@
                             <tr>
                                 <td>STT</td>
                                 <td>Họ và tên</td>
-                                <td>Liên hệ</td>
-                                <td>Ngày tham gia</td>
                                 <td>Tình trạng</td>
                                 <td></td>
                             </tr>
@@ -312,6 +288,7 @@
                 </div>
                 <!-- </div> -->
             </div>
+
             <!-- Order  -->
             <div class="section">
                 <div class="admin-control">
@@ -347,6 +324,8 @@
                     </table>
                 </div>
             </div>
+
+            
             <div class="section">
                 <div class="admin-control">
                     <div class="admin-control-left">
@@ -443,6 +422,167 @@
                 </div>
             </div>
             </div>
+
+
+            <!-- Phieu nhap  -->
+            <div class="section">
+                <div class="admin-control">
+
+                    
+                    <div class="admin-control-right">
+                        </form>      
+    
+                        <button id="btn-add-user" class="btn-control-large" onclick="openCreateAccount()"><i class="material-symbols-outlined">
+                            add
+                            </i> <span>Thêm khách hàng</span></button>          
+                    </div>
+                </div>
+                <div class="tab">
+                    <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>STT</td>
+                                <td>Họ và tên</td>
+                                <td>Tình trạng</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody id="show-user">
+                        </tbody>
+                    </table> 
+                </div>
+                </div>
+                <!-- </div> -->
+            </div>
+
+            <!-- Khuyen mai  -->
+            <div class="section">
+                <div class="admin-control">
+
+                    
+                    <div class="admin-control-right">
+                        </form>      
+    
+                        <button id="btn-add-user" class="btn-control-large" onclick="openCreateAccount()"><i class="material-symbols-outlined">
+                            add
+                            </i> <span>Thêm khách hàng</span></button>          
+                    </div>
+                </div>
+                <div class="tab">
+                    <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>STT</td>
+                                <td>Họ và tên</td>
+                                <td>Tình trạng</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody id="show-user">
+                        </tbody>
+                    </table> 
+                </div>
+                </div>
+                <!-- </div> -->
+            </div>
+
+            <!-- Nha xuat ban  -->
+            <div class="section">
+                <div class="admin-control">
+
+                    
+                    <div class="admin-control-right">
+                        </form>      
+    
+                        <button id="btn-add-user" class="btn-control-large" onclick="openCreateAccount()"><i class="material-symbols-outlined">
+                            add
+                            </i> <span>Thêm khách hàng</span></button>          
+                    </div>
+                </div>
+                <div class="tab">
+                    <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>STT</td>
+                                <td>Họ và tên</td>
+                                <td>Tình trạng</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody id="show-user">
+                        </tbody>
+                    </table> 
+                </div>
+                </div>
+                <!-- </div> -->
+            </div>
+
+
+            <!-- Tac gia  -->
+            <div class="section">
+                <div class="admin-control">
+
+                    <div class="admin-control-right">
+                        </form>      
+                        <button id="btn-add-author" class="btn-control-large" onclick="openCreateAuthor()"><i class="material-symbols-outlined">
+                            add
+                            </i> <span>Thêm tác giả</span></button>          
+                    </div>
+                </div>
+                <div class="tab">
+                    <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>STT</td>
+                                <td>Họ và tên</td>
+                                <td>Chức năng</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody id="show-author">
+                        </tbody>
+                    </table> 
+                </div>
+                </div>
+                <!-- </div> -->
+            </div>
+
+
+            <!-- Nha cung cap  -->
+            <div class="section">
+                <div class="admin-control">
+
+                    
+                    <div class="admin-control-right">
+                        </form>      
+    
+                        <button id="btn-add-user" class="btn-control-large" onclick="openCreateAccount()"><i class="material-symbols-outlined">
+                            add
+                            </i> <span>Thêm khách hàng</span></button>          
+                    </div>
+                </div>
+                <div class="tab">
+                    <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>STT</td>
+                                <td>Họ và tên</td>
+                                <td>Tình trạng</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody id="show-user">
+                        </tbody>
+                    </table> 
+                </div>
+                </div>
+                <!-- </div> -->
+            </div>
         </main>
     </div>
 
@@ -469,28 +609,42 @@
                                 class="form-control">
                             <span class="form-message"></span>
                         </div>
+
                         <div class="form-group">
-                            <label for="category" class="form-label">Chọn sản phẩm</label>
-                            <select name="category" id="chon-mon">
-                                <option>Nike</option>
-                                <option>Jordan</option>
-                                <option>Adidas</option>
-                                <option>Converse</option>
-                                <option>Vans</option>
+                            <label for="publisher_id">Nhà xuất bản:</label>
+                            <select id="publisher_id" name="publisher_id">
                             </select>
                             <span class="form-message"></span>
                         </div>
+
+                        <div class="form-group">
+                            <label for="category" class="form-label">Chọn thuộc tính</label>
+                            <select name="category" id="chon-mon" multiple>
+                            </select>
+                            <span class="form-message"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="author_ids" class="form-label">Tác giả:</label>
+                            <select id="author_ids" name="author_ids[]" multiple>
+                            </select>
+                            <span class="form-message"></span>
+                        </div>
+
                         <div class="form-group">
                             <label for="gia-moi" class="form-label">Giá bán</label>
-                            <input id="gia-moi" name="gia-moi" type="text" placeholder="Nhập giá bán"
+                            <input id="gia-moi" id="gia-moi" type="text" placeholder="Nhập giá bán"
                                 class="form-control">
                             <span class="form-message"></span>
                         </div>
+
                         <div class="form-group">
-                            <label for="mo-ta" class="form-label">Mô tả</label>
-                            <textarea class="product-desc" id="mo-ta" placeholder="Nhập mô tả sản phẩm..."></textarea>
+                                <label for="discount" class="form-label">Giảm giá:</label>
+                                <select id="discount" name="discount">
+                                </select>
                             <span class="form-message"></span>
                         </div>
+
                         <button class="form-submit2 btn-add-product-form add-product-e" id="add-product-button">
                             <i class="material-symbols-outlined">
                                 add
@@ -547,41 +701,33 @@
         </div>
     </div>
 
-    <div class="modal signup">
+
+<!-- THEM TAC GIA VA SUA TAC GIA -->
+
+    <div class="modal signup-author">
         <div class="modal-container">
-            <h3 class="modal-container-title add-account-e">THÊM KHÁCH HÀNG MỚI</h3>
-            <h3 class="modal-container-title edit-account-e">CHỈNH SỬA THÔNG TIN</h3>
+            <h3 class="modal-container-title add-author-e">THÊM KHÁCH HÀNG MỚI</h3>
+            <h3 class="modal-container-title edit-author-e">CHỈNH SỬA THÔNG TIN</h3>
             <button class="modal-close"><i class="material-symbols-outlined">
                 close
                 </i></button>
+
             <div class="form-content sign-up">
-                <form action="" class="signup-form">
+                <form action="" class="signup-author-form">
                     <div class="form-group">
                         <label for="fullname" class="form-label">Tên đầy đủ</label>
                         <input id="fullname" name="fullname" type="text" placeholder="VD: ABCD" class="form-control">
                         <span class="form-message-name form-message"></span>
                     </div>
-                    <div class="form-group">
-                        <label for="phone" class="form-label">Số điện thoại</label>
-                        <input id="phone" name="phone" type="text" placeholder="Nhập số điện thoại" class="form-control">
-                        <span class="form-message-phone form-message"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="password" class="form-label">Mật khẩu</label>
-                        <input id="password" name="password" type="text" placeholder="Nhập mật khẩu" class="form-control">
-                        <span class="form-message-password form-message"></span>
-                    </div>   
-                    <div class="form-group edit-account-e">
-                        <label for="" class="form-label">Trạng thái</label>
-                        <input type="checkbox" id="user-status" class="switch-input">
-                        <label for="user-status" class="switch"></label>
-                    </div>
-                    <button class="form-submit add-account-e" id="signup-button">Đăng ký</button>
-                    <button class="form-submit4 edit-account-e" id="btn-update-account"><i class="material-symbols-outlined">
+
+
+                    <button class="form-submit add-author-e" id="signup-author-button">Đăng ký</button>
+                    <button class="form-submit4 edit-author-e" id="btn-update-author"><i class="material-symbols-outlined">
                         save
                         </i> <span> Lưu</span></button>
                 </form>
             </div>
+
         </div>
     </div>
     <script>
