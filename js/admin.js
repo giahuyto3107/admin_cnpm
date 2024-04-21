@@ -252,7 +252,6 @@ function showProduct() {
   }
   
 function cancelSearchProduct() {
-    let products = localStorage.getItem("products") ? JSON.parse(localStorage.getItem("products")).filter(item => item.status == 1) : [];
     document.getElementById('the-loai').value = "Tất cả";
     document.getElementById('form-search-product').value = "";
     displayList(products, perPage, currentPage);
@@ -297,6 +296,169 @@ function changeStatusProduct(id) {
     showProduct();
 }
 
+function getDataCategories() {
+    const accessToken = localStorage.getItem('accessToken');
+    
+    if (!accessToken) {
+      console.error('Token not found in localStorage');
+      return;
+    }
+    
+    fetch('http://localhost:8080/api/v1/categories', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        token: accessToken,
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const selectElement = document.getElementById('chon-mon');
+        
+        // Xóa các phần tử cũ trong thẻ <select>
+        selectElement.innerHTML = '';
+        
+        // Tạo các phần tử <option> mới dựa trên dữ liệu danh mục
+        data.content.forEach(category => {
+          const optionElement = document.createElement('option');
+          optionElement.value = category.id;
+          optionElement.textContent = category.name;
+          selectElement.appendChild(optionElement);
+        });
+      })
+      .catch(error => {
+        console.error('Failed to fetch data:', error);
+      });
+  }
+  getDataCategories();
+
+  function getDataAuthors() {
+    const accessToken = localStorage.getItem('accessToken');
+    
+    if (!accessToken) {
+      console.error('Token not found in localStorage');
+      return;
+    }
+    
+    fetch('http://localhost:8080/api/v1/authors', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        token: accessToken,
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const selectElement = document.getElementById('author_ids');
+        
+        // Xóa các phần tử cũ trong thẻ <select>
+        selectElement.innerHTML = '';
+        
+        // Tạo các phần tử <option> mới dựa trên dữ liệu danh mục
+        data.content.forEach(author => {
+          const optionElement = document.createElement('option');
+          optionElement.value = author.id;
+          optionElement.textContent = author.name;
+          selectElement.appendChild(optionElement);
+        });
+      })
+      .catch(error => {
+        console.error('Failed to fetch data:', error);
+      });
+  }
+getDataAuthors();
+
+function getDataPublisher() {
+    const accessToken = localStorage.getItem('accessToken');
+    
+    if (!accessToken) {
+      console.error('Token not found in localStorage');
+      return;
+    }
+    
+    fetch('http://localhost:8080/api/v1/publishers/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        token: accessToken,
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const selectElement = document.getElementById('publisher_id');
+        
+        // Xóa các phần tử cũ trong thẻ <select>
+        selectElement.innerHTML = '';
+        
+        // Tạo các phần tử <option> mới dựa trên dữ liệu danh mục
+        data.content.forEach(publisher => {
+          const optionElement = document.createElement('option');
+          optionElement.value = publisher.id;
+          optionElement.textContent = publisher.name;
+          selectElement.appendChild(optionElement);
+        });
+      })
+      .catch(error => {
+        console.error('Failed to fetch data:', error);
+      });
+  }
+  getDataPublisher();
+
+  function getDataDiscount() {
+    const accessToken = localStorage.getItem('accessToken');
+    
+    if (!accessToken) {
+      console.error('Token not found in localStorage');
+      return;
+    }
+    
+    fetch('http://localhost:8080/api/v1/discounts/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        token: accessToken,
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch discount');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const selectElement = document.getElementById('discount');
+        
+        // Xóa các phần tử cũ trong thẻ <select>
+        selectElement.innerHTML = '';
+        
+        // Tạo các phần tử <option> mới dựa trên dữ liệu danh mục
+        data.content.forEach(discount => {
+          const optionElement = document.createElement('option');
+          optionElement.value = discount.id;
+          optionElement.textContent = discount.name;
+          selectElement.appendChild(optionElement);
+        });
+      })
+      .catch(error => {
+        console.error('Failed to fetch data:', error);
+      });
+  }
+getDataDiscount();
 var indexCur;
 function editProduct(id) {
     let products = localStorage.getItem("products") ? JSON.parse(localStorage.getItem("products")) : [];
@@ -792,11 +954,11 @@ function openCreateAccount() {
 
 function signUpFormReset() {
     document.getElementById('fullname').value = ""
-    document.getElementById('phone').value = ""
-    document.getElementById('password').value = ""
-    document.querySelector('.form-message-name').innerHTML = '';
-    document.querySelector('.form-message-phone').innerHTML = '';
-    document.querySelector('.form-message-password').innerHTML = '';
+    // document.getElementById('phone').value = ""
+    // document.getElementById('password').value = ""
+    // document.querySelector('.form-message-name').innerHTML = '';
+    // document.querySelector('.form-message-phone').innerHTML = '';
+    // document.querySelector('.form-message-password').innerHTML = '';
 }
 
 function showUserArr(arr) {
@@ -807,16 +969,13 @@ function showUserArr(arr) {
         arr.forEach((account, index) => {
             let tinhtrang = account.status == 0 ? `<span class="status-no-complete">Bị khóa</span>` : `<span class="status-complete">Hoạt động</span>`;
             accountHtml += ` <tr>
-            <td>${index + 1}</td>
-            <td>${account.fullname}</td>
-            <td>${account.phone}</td>
-            <td>${formatDate(account.join)}</td>
-            <td>${tinhtrang}</td>
+            <td>${account.id}</td>
+            <td>${account.name}</td>
             <td class="control control-table">
-            <button class="btn-edit" id="edit-account" onclick='editAccount(${account.phone})' ><i class="material-symbols-outlined">
+            <button class="btn-edit" id="edit-account" onclick='editAccount(${account.id})' ><i class="material-symbols-outlined">
             edit_note
             </i></button>
-            <button class="btn-delete" id="delete-account" onclick="deleteAcount(${index})"><i class="material-symbols-outlined">
+            <button class="btn-delete" id="delete-account" onclick="deleteAcount(${account.id})"><i class="material-symbols-outlined">
             delete
             </i></button>
             </td>
@@ -827,63 +986,80 @@ function showUserArr(arr) {
 }
 
 function showUser() {
-    let tinhTrang = parseInt(document.getElementById("tinh-trang-user").value);
-    let ct = document.getElementById("form-search-user").value;
-    let timeStart = document.getElementById("time-start-user").value;
-    let timeEnd = document.getElementById("time-end-user").value;
+  const accessToken = localStorage.getItem('accessToken');
 
-    if (timeEnd < timeStart && timeEnd != "" && timeStart != "") {
-        alert("Lựa chọn thời gian sai !");
-        return;
-    }
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
 
-    let accounts = localStorage.getItem("accounts") ? JSON.parse(localStorage.getItem("accounts")).filter(item => item.userType == 0) : [];
-    let result = tinhTrang == 2 ? accounts : accounts.filter(item => item.status == tinhTrang);
+  fetch('http://localhost:8080/api/v1/authors', {
+    // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
 
-    result = ct == "" ? result : result.filter((item) => {
-        return (item.fullname.toLowerCase().includes(ct.toLowerCase()) || item.phone.toString().toLowerCase().includes(ct.toLowerCase()));
+
+    showUserArr(data.content);
+
+
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
     });
-
-    if (timeStart != "" && timeEnd == "") {
-        result = result.filter((item) => {
-            return new Date(item.join) >= new Date(timeStart).setHours(0, 0, 0);
-        });
-    } else if (timeStart == "" && timeEnd != "") {
-        result = result.filter((item) => {
-            return new Date(item.join) <= new Date(timeEnd).setHours(23, 59, 59);
-        });
-    } else if (timeStart != "" && timeEnd != "") {
-        result = result.filter((item) => {
-            return (new Date(item.join) >= new Date(timeStart).setHours(0, 0, 0) && new Date(item.join) <= new Date(timeEnd).setHours(23, 59, 59)
-            );
-        });
-    }
-    showUserArr(result);
+    
 }
 
-function cancelSearchUser() {
-    let accounts = localStorage.getItem("accounts") ? JSON.parse(localStorage.getItem("accounts")).filter(item => item.userType == 0) : [];
-    showUserArr(accounts);
-    document.getElementById("tinh-trang-user").value = 2;
-    document.getElementById("form-search-user").value = "";
-    document.getElementById("time-start-user").value = "";
-    document.getElementById("time-end-user").value = "";
-}
+// function cancelSearchUser() {
+//     let accounts = localStorage.getItem("accounts") ? JSON.parse(localStorage.getItem("accounts")).filter(item => item.userType == 0) : [];
+//     showUserArr(accounts);
+//     document.getElementById("tinh-trang-user").value = 2;
+//     document.getElementById("form-search-user").value = "";
+//     document.getElementById("time-start-user").value = "";
+//     document.getElementById("time-end-user").value = "";
+// }
 
 window.onload = showUser();
 
-function deleteAcount(phone) {
-    let accounts = JSON.parse(localStorage.getItem('accounts'));
-    let index = accounts.findIndex(item => item.phone == phone);
+function deleteAcount(id) {
     if (confirm("Bạn có chắc muốn xóa?")) {
-        accounts.splice(index, 1)
+      // Lấy token từ localStorage
+      const accessToken = localStorage.getItem('accessToken');
+
+      // Kiểm tra xem có token trong localStorage hay không
+      if (!accessToken) {
+        console.error('Token not found in localStorage');
+        return;
+      }
+
+      fetch(`http://localhost:8080/api/v1/authors/author/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          token: accessToken,
+        },
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Xóa thành công');
+          console.log('Kết quả tìm kiếm bằng mã:', data.content);
+          location.reload();
+          // Xử lý kết quả tìm kiếm đơn hàng ở đây
+        })
+        .catch(error => {
+          console.error('Failed to fetch data:', error);
+        });
     }
-    localStorage.setItem("accounts", JSON.stringify(accounts));
-    showUser();
 }
 
 let indexFlag;
-function editAccount(phone) {
+function editAccount(id) {
     document.querySelector(".signup").classList.add("open");
     document.querySelectorAll(".add-account-e").forEach(item => {
         item.style.display = "none"
@@ -891,100 +1067,237 @@ function editAccount(phone) {
     document.querySelectorAll(".edit-account-e").forEach(item => {
         item.style.display = "block"
     })
-    let accounts = JSON.parse(localStorage.getItem("accounts"));
-    let index = accounts.findIndex(item => {
-        return item.phone == phone
+    
+    const accessToken = localStorage.getItem('accessToken');
+
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  // Gửi yêu cầu GET để tìm kiếm danh mục bằng ID
+  fetch(`http://localhost:8080/api/v1/authors/author/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+
+      document.getElementById("fullname").value =  data.content.name;
+      const nameInput = document.getElementById('fullname');
+      
+      updateAccount.addEventListener('click', () => {
+        const updatedData = {
+          name: nameInput.value,
+        };
+        // Gửi yêu cầu PUT để cập nhật danh mục
+        fetch(`http://localhost:8080/api/v1/authors/author/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            token: accessToken,
+          },
+          body: JSON.stringify(updatedData),
+        })
+          .then(response => response.json())
+          .then(updatedCategory => {
+            console.log('Danh mục đã được cập nhật:', updatedCategory);
+          })
+          .catch(error => {
+            console.error('Lỗi khi cập nhật danh mục:', error);
+          });
+      });
     })
-    indexFlag = index;
-    document.getElementById("fullname").value = accounts[index].fullname;
-    document.getElementById("phone").value = accounts[index].phone;
-    document.getElementById("password").value = accounts[index].password;
-    document.getElementById("user-status").checked = accounts[index].status == 1 ? true : false;
+    .catch(error => {
+      console.error('Lỗi khi tìm kiếm danh mục:', error);
+    });
+    // indexFlag = index;
+    // document.getElementById("fullname").value = accounts[index].fullname;
+    // document.getElementById("phone").value = accounts[index].phone;
+    // document.getElementById("password").value = accounts[index].password;
+    // document.getElementById("user-status").checked = accounts[index].status == 1 ? true : false;
 }
 
-updateAccount.addEventListener("click", (e) => {
-    e.preventDefault();
-    let accounts = JSON.parse(localStorage.getItem("accounts"));
-    let fullname = document.getElementById("fullname").value;
-    let phone = document.getElementById("phone").value;
-    let password = document.getElementById("password").value;
-    if(fullname == "" || phone == "" || password == "") {
-        toast({ title: 'Chú ý', message: 'Vui lòng nhập đầy đủ thông tin !', type: 'warning', duration: 3000 });
-    } else {
-        accounts[indexFlag].fullname = document.getElementById("fullname").value;
-        accounts[indexFlag].phone = document.getElementById("phone").value;
-        accounts[indexFlag].password = document.getElementById("password").value;
-        accounts[indexFlag].status = document.getElementById("user-status").checked ? true : false;
-        localStorage.setItem("accounts", JSON.stringify(accounts));
-        toast({ title: 'Thành công', message: 'Thay đổi thông tin thành công !', type: 'success', duration: 3000 });
-        document.querySelector(".signup").classList.remove("open");
-        signUpFormReset();
-        showUser();
-    }
-})
+// updateAccount.addEventListener("click", (e) => {
+//     e.preventDefault();
+//     let accounts = JSON.parse(localStorage.getItem("accounts"));
+//     let fullname = document.getElementById("fullname").value;
+//     let phone = document.getElementById("phone").value;
+//     let password = document.getElementById("password").value;
+//     if(fullname == "" || phone == "" || password == "") {
+//         toast({ title: 'Chú ý', message: 'Vui lòng nhập đầy đủ thông tin !', type: 'warning', duration: 3000 });
+//     } else {
+//         accounts[indexFlag].fullname = document.getElementById("fullname").value;
+//         accounts[indexFlag].phone = document.getElementById("phone").value;
+//         accounts[indexFlag].password = document.getElementById("password").value;
+//         accounts[indexFlag].status = document.getElementById("user-status").checked ? true : false;
+//         localStorage.setItem("accounts", JSON.stringify(accounts));
+//         toast({ title: 'Thành công', message: 'Thay đổi thông tin thành công !', type: 'success', duration: 3000 });
+//         document.querySelector(".signup").classList.remove("open");
+//         signUpFormReset();
+//         showUser();
+//     }
+// })
 
-addAccount.addEventListener("click", (e) => {
-    e.preventDefault();
-    let fullNameUser = document.getElementById('fullname').value;
-    let phoneUser = document.getElementById('phone').value;
-    let passwordUser = document.getElementById('password').value;
-        // Check validate
-        let fullNameIP = document.getElementById('fullname');
-        let formMessageName = document.querySelector('.form-message-name');
-        let formMessagePhone = document.querySelector('.form-message-phone');
-        let formMessagePassword = document.querySelector('.form-message-password');
+
+function addProduct(event) {
+  event.preventDefault();
+
+  const nameInput = document.getElementById('fullname');
+ 
+    const newProduct = {
+      name: nameInput.value,
+    };
+
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      console.error('Token not found in localStorage');
+      return;
+    }
+
+    fetch('http://localhost:8080/api/v1/authors/author', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'token': accessToken,
+      },
+      body: JSON.stringify(newProduct)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Lỗi khi gửi yêu cầu.');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Data gốc:', data);
+        console.log('Data thành phần:', data.content);
+        alert('Thêm sản phẩm thành công');
+        location.reload();
+      })
+      .catch(error => {
+        console.error('Lỗi khi gửi yêu cầu:', error);
+        alert('Thêm sản phẩm thất bại');
+      });
+};
+
+
+addAccount.addEventListener('click', addProduct);
+
+// addAccount.addEventListener("click", (e) => {
+//     e.preventDefault();
+//     let fullNameAuthor = document.getElementById("fullname").value;
+//     let fullNameAuthorIP = document.getElementById('fullname');
+
+//     if (fullNameAuthor.length == 0) {
+//       formMessageName.innerHTML = 'Vui lòng nhập họ vâ tên';
+//       fullNameAuthorIP.focus();
+//   } else if (fullNameAuthor.length < 3) {
+//     fullNameAuthorIP.value = '';
+//       formMessageName.innerHTML = 'Vui lòng nhập họ và tên lớn hơn 3 kí tự';
+//   }
+
+//       if (fullNameAuthor) {
+//         let author = {
+//             name: fullNameAuthor,
+//         }
+//     const accessToken = localStorage.getItem('accessToken');
+//     if (!accessToken) {
+//       console.error('Token not found in localStorage');
+//       return;
+//     }
+
+//     fetch('http://localhost:8080/api/v1/categories/category', {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'token': accessToken,
+//       },
+//       body: JSON.stringify(author)
+//     })
+//       .then(response => {
+//         if (!response.ok) {
+//           throw new Error('Lỗi khi gửi yêu cầu.');
+//         }
+//         return response.json();
+//       })
+//       .then(data => {
+//             toast({ title: 'Thành công', message: 'Tạo thành công tài khoản !', type: 'success', duration: 3000 });
+//             document.querySelector(".signup").classList.remove("open");
+//             showUser();
+//             signUpFormReset();
+//       })
+//       .catch(error => {
+//         toast({ title: 'Cảnh báo !', message: 'Tài khoản đã tồn tại !', type: 'error', duration: 3000 });
+//       });
+//     }
+
+
+
+//     // let fullNameUser = document.getElementById('fullname').value;
+//     // let phoneUser = document.getElementById('phone').value;
+//     // let passwordUser = document.getElementById('password').value;
+//         // Check validate
+//         // let fullNameIP = document.getElementById('fullname');
+//         // let formMessageName = document.querySelector('.form-message-name');
+//         // let formMessagePhone = document.querySelector('.form-message-phone');
+//         // let formMessagePassword = document.querySelector('.form-message-password');
     
-        if (fullNameUser.length == 0) {
-            formMessageName.innerHTML = 'Vui lòng nhập họ vâ tên';
-            fullNameIP.focus();
-        } else if (fullNameUser.length < 3) {
-            fullNameIP.value = '';
-            formMessageName.innerHTML = 'Vui lòng nhập họ và tên lớn hơn 3 kí tự';
-        }
+//         // if (fullNameUser.length == 0) {
+//         //     formMessageName.innerHTML = 'Vui lòng nhập họ vâ tên';
+//         //     fullNameIP.focus();
+//         // } else if (fullNameUser.length < 3) {
+//         //     fullNameIP.value = '';
+//         //     formMessageName.innerHTML = 'Vui lòng nhập họ và tên lớn hơn 3 kí tự';
+//         // }
         
-        if (phoneUser.length == 0) {
-            formMessagePhone.innerHTML = 'Vui lòng nhập vào số điện thoại';
-        } else if (phoneUser.length != 10) {
-            formMessagePhone.innerHTML = 'Vui lòng nhập vào số điện thoại 10 số';
-            document.getElementById('phone').value = '';
-        }
+//         // if (phoneUser.length == 0) {
+//         //     formMessagePhone.innerHTML = 'Vui lòng nhập vào số điện thoại';
+//         // } else if (phoneUser.length != 10) {
+//         //     formMessagePhone.innerHTML = 'Vui lòng nhập vào số điện thoại 10 số';
+//         //     document.getElementById('phone').value = '';
+//         // }
         
-        if (passwordUser.length == 0) {
-            formMessagePassword.innerHTML = 'Vui lòng nhập mật khẩu';
-        } else if (passwordUser.length < 6) {
-            formMessagePassword.innerHTML = 'Vui lòng nhập mật khẩu lớn hơn 6 kí tự';
-            document.getElementById('password').value = '';
-        }
+//         // if (passwordUser.length == 0) {
+//         //     formMessagePassword.innerHTML = 'Vui lòng nhập mật khẩu';
+//         // } else if (passwordUser.length < 6) {
+//         //     formMessagePassword.innerHTML = 'Vui lòng nhập mật khẩu lớn hơn 6 kí tự';
+//         //     document.getElementById('password').value = '';
+//         // }
 
-    if (fullNameUser && phoneUser && passwordUser) {
-        let user = {
-            fullname: fullNameUser,
-            phone: phoneUser,
-            password: passwordUser,
-            address: '',
-            email: '',
-            status: 1,
-            join: new Date(),
-            cart: [],
-            userType: 0
-        }
-        console.log(user);
-        let accounts = localStorage.getItem('accounts') ? JSON.parse(localStorage.getItem('accounts')) : [];
-        let checkloop = accounts.some(account => {
-            return account.phone == user.phone;
-        })
-        if (!checkloop) {
-            accounts.push(user);
-            localStorage.setItem('accounts', JSON.stringify(accounts));
-            toast({ title: 'Thành công', message: 'Tạo thành công tài khoản !', type: 'success', duration: 3000 });
-            document.querySelector(".signup").classList.remove("open");
-            showUser();
-            signUpFormReset();
-        } else {
-            toast({ title: 'Cảnh báo !', message: 'Tài khoản đã tồn tại !', type: 'error', duration: 3000 });
-        }
-    }
-})
+//     // if (fullNameUser && phoneUser && passwordUser) {
+//     //     let user = {
+//     //         fullname: fullNameUser,
+//     //         phone: phoneUser,
+//     //         password: passwordUser,
+//     //         address: '',
+//     //         email: '',
+//     //         status: 1,
+//     //         join: new Date(),
+//     //         cart: [],
+//     //         userType: 0
+//     //     }
+//     //     console.log(user);
+//     //     let accounts = localStorage.getItem('accounts') ? JSON.parse(localStorage.getItem('accounts')) : [];
+//     //     let checkloop = accounts.some(account => {
+//     //         return account.phone == user.phone;
+//     //     })
+//     //     if (!checkloop) {
+//     //         accounts.push(user);
+//     //         localStorage.setItem('accounts', JSON.stringify(accounts));
+//     //         toast({ title: 'Thành công', message: 'Tạo thành công tài khoản !', type: 'success', duration: 3000 });
+//     //         document.querySelector(".signup").classList.remove("open");
+//     //         showUser();
+//     //         signUpFormReset();
+//     //     } else {
+//     //         toast({ title: 'Cảnh báo !', message: 'Tài khoản đã tồn tại !', type: 'error', duration: 3000 });
+//     //     }
+//     // }
+// })
 
 document.getElementById("logout-acc").addEventListener('click', (e) => {
     e.preventDefault();
