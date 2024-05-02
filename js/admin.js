@@ -21,35 +21,41 @@ function login() {
       });
   }
 
-function getData() {
-    // Lấy token từ localStorage
-    const accessToken = localStorage.getItem('accessToken');
+  // function refreshToken() {
+  //   const refreshToken = localStorage.getItem('refreshToken');
   
-    // Kiểm tra xem có token trong localStorage hay không
-    if (!accessToken) {
-      console.error('Token not found in localStorage');
-      return;
-    }
+  //   // Kiểm tra xem có refreshToken trong localStorage hay không
+  //   if (!refreshToken) {
+  //     console.error('refreshToken not found in localStorage');
+  //     return;
+  //   }
   
-    fetch('http://localhost:8080/api/v1/products', {
-      //SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        token: accessToken,
-      },
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Data thành phần: ', data.content);
-        return data.content;
-      })
-      .catch(error => {
-        console.error('Failed to fetch data:', error);
-      });
-  }
+  //   fetch('http://localhost:8080/api/v1/users/refresh-token', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({ refreshToken }),
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       if (data.success) {
+  //         const accessToken = data.content.access_token;
+  //         // Lưu accessToken mới vào localStorage
+  //         localStorage.setItem('accessToken', accessToken);
+  //         console.log('Token refreshed successfully');
+  //       } else {
+  //         console.error('Token refresh failed:', data.message);
+  //       }
+  //     })
+  //     .catch(error => {
+  //       console.error('Error refreshing token:', error);
+  //     });
+  // }
 
-getData();
+
+  // refreshToken();
+
 
 $(".menu-btn").click(function(){
     $(".sidebar").toggleClass("active");
@@ -77,7 +83,7 @@ for(let i=0;i<closeBtn.length;i++){
 
 // Get amount product
 function getAmoumtProduct() {
-    fetch('http://localhost:8080/api/v1/products')
+    fetch('http://localhost:8080/api/v1/products?status=1')
       .then(res => res.json())
       .then(data => {
         const amount = data.content.length;
@@ -90,22 +96,80 @@ function getAmoumtProduct() {
 
 // Get amount user
 function getAmoumtUser() {
-    let accounts = localStorage.getItem("accounts") ? JSON.parse(localStorage.getItem("accounts")) : [];
-    return accounts.filter(item => item.userType == 0).length;
-}
+      const accessToken = localStorage.getItem('accessToken');
 
-// Get amount user
-function getMoney() {
-    let tongtien = 0;
-    let orders = localStorage.getItem("order") ? JSON.parse(localStorage.getItem("order")) : [];
-    orders.forEach(item => {
-        tongtien += item.tongtien
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  fetch('http://localhost:8080/api/v1/users?status=1', {
+    // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log( 'Chieu dai', data.content.length)
+      return data.content.length;
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
     });
-    return tongtien;
 }
 
+amountUser=getAmoumtUser();
+console.log('Co',amountUser);
+// // Get amount user
+// function getMoney() {
+//       // Lấy token từ localStorage
+//   const accessToken = localStorage.getItem('accessToken');
+
+//   // Kiểm tra xem có token trong localStorage hay không
+//   if (!accessToken) {
+//     console.error('Token not found in localStorage');
+//     return;
+//   }
+
+//   fetch('http://localhost:8080/api/v1/bills', {
+//     method: 'GET',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       token: accessToken,
+//     },
+//   })
+//     .then(response => response.json())
+//     .then(data => {
+//       console.log('Data gốc: ', data);
+//       console.log('Data thành phần: ', data.content);
+
+//       // Tính tổng giá tiền từ các phần tử total_price với trạng thái "Đã duyệt"
+//       let totalPriceSum = 0;
+//       data.content.forEach(item => {
+//         if (item.status === "Đã duyệt") {
+//           totalPriceSum += item.total_price;
+//         }
+//       });
+//       console.log('Tổng giá tiền:', totalPriceSum);
+//       const amount = totalPriceSum;
+//         document.getElementById("doanh-thu").innerHTML = amount;
+
+//       // Các mã lệnh hiển thị bảng HTML ở đây
+//     })
+//     .catch(error => {
+//       console.error('Failed to fetch data:', error);
+//     });
+// }
+
+// document.getElementById("amount-user").innerHTML = amountUser;
 document.getElementById("amount-product").innerHTML = getAmoumtProduct();
-document.getElementById("doanh-thu").innerHTML = vnd(getMoney());
+// document.getElementById("doanh-thu").innerHTML = vnd(getMoney());
+
+
 
 
 // Doi sang dinh dang tien VND
@@ -122,7 +186,7 @@ function displayList(productAll) {
       return;
     }
   
-    fetch('http://localhost:8080/api/v1/products', {
+    fetch('http://localhost:8080/api/v1/products?status=1', {
       //SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
       method: 'GET',
       headers: {
@@ -140,6 +204,33 @@ function displayList(productAll) {
     
 }
 
+function displayListInactive(productAll) {
+  // Lấy token từ localStorage
+  const accessToken = localStorage.getItem('accessToken');
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  fetch('http://localhost:8080/api/v1/products?status=0', {
+    //SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      showProductArr(data.content);
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+    });
+  
+}
+
 function displayListSearch(productAll, keyword) {
     // Lấy token từ localStorage
     const accessToken = localStorage.getItem('accessToken');
@@ -150,6 +241,34 @@ function displayListSearch(productAll, keyword) {
     }
   
     const url = `http://localhost:8080/api/v1/products?search=${encodeURIComponent(keyword)}`;
+  
+    fetch(url, {
+      // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        token: accessToken,
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        showProductArr(data.content);
+      })
+      .catch(error => {
+        console.error('Failed to fetch data:', error);
+      });
+  }
+
+  function displayListSearchInactive(productAll, keyword) {
+    // Lấy token từ localStorage
+    const accessToken = localStorage.getItem('accessToken');
+    // Kiểm tra xem có token trong localStorage hay không
+    if (!accessToken) {
+      console.error('Token not found in localStorage');
+      return;
+    }
+  
+    const url = `http://localhost:8080/api/v1/products?search=${encodeURIComponent(keyword)}&status=0`;
   
     fetch(url, {
       // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
@@ -214,7 +333,13 @@ function showProductArr(arr) {
               <div class="list-info">
                 <h4>${product.product_name}</h4>
                 <p class="list-note">${product.publisher_name}</p>
-                <span class="list-category">${product.category_names}</span>
+                <span class="list-category">Thể loại: ${product.category_names}</span>
+                <br>
+                <span class="list-category">Tên tác giả: ${product.author_names}</span>
+                <br>
+                <span class="list-category">Khuyến mãi: ${product.discount}</span>
+                <br>
+                <span class="list-category">Số lượng: ${product.quantity}</span>
               </div>
             </div>
             <div class="list-right">
@@ -236,8 +361,7 @@ function showProductArr(arr) {
     document.getElementById("show-product").innerHTML = productHtml;
 }
 
-function showProduct() {
-    let selectOp = document.getElementById('the-loai').value;
+function showProductActive() {
     let valeSearchInput = document.getElementById('form-search-product').value;
     let products = localStorage.getItem("products") ? JSON.parse(localStorage.getItem("products")) : [];
   
@@ -251,14 +375,32 @@ function showProduct() {
     }
   }
   
-function cancelSearchProduct() {
-    document.getElementById('the-loai').value = "Tất cả";
-    document.getElementById('form-search-product').value = "";
-    displayList(products, perPage, currentPage);
-    setupPagination(products, perPage, currentPage);
-}
+  function showProductInactive() {
+    let valeSearchInput = document.getElementById('form-search-product').value;
+    let products = localStorage.getItem("products") ? JSON.parse(localStorage.getItem("products")) : [];
+  
+    let result;
+  
+    if (valeSearchInput === "") {
+      result = products;
+      displayListInactive(result);
+    } else {
+      displayListSearch(result,valeSearchInput);
+    }
+  }
 
-window.onload = showProduct();
+  function handleUserStatusChangeProduct() {
+    var selectElement = document.getElementById("product-change");
+    var selectedValue = selectElement.value;
+  
+    if (selectedValue === "active") {
+        showProductActive();
+    } else if (selectedValue === "inactive") {
+        showProductInactive();
+    }
+  }
+
+window.onload = showProductActive();
 
 function createId(arr) {
     let id = arr.length;
@@ -282,8 +424,8 @@ function deleteProduct(id) {
       return;
     }
 
-    fetch(`http://localhost:8080/api/v1/products/product/${id}`, {
-      method: 'DELETE',
+    fetch(`http://localhost:8080/api/v1/products/product-delete/${id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         token: accessToken,
@@ -301,18 +443,7 @@ function deleteProduct(id) {
 }
 
 
-function changeStatusProduct(id) {
-    let products = JSON.parse(localStorage.getItem("products"));
-    let index = products.findIndex(item => {
-        return item.id == id;
-    })
-    if (confirm("Bạn có chắc chắn muốn hủy xóa?") == true) {
-        products[index].status = 1;
-        toast({ title: 'Success', message: 'Khôi phục sản phẩm thành công !', type: 'success', duration: 3000 });
-    }
-    localStorage.setItem("products", JSON.stringify(products));
-    showProduct();
-}
+
 
 function getDataCategories() {
     const accessToken = localStorage.getItem('accessToken');
@@ -322,7 +453,7 @@ function getDataCategories() {
       return;
     }
     
-    fetch('http://localhost:8080/api/v1/categories', {
+    fetch('http://localhost:8080/api/v1/categories?status=1', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -363,7 +494,7 @@ function getDataCategories() {
       return;
     }
     
-    fetch('http://localhost:8080/api/v1/authors', {
+    fetch('http://localhost:8080/api/v1/authors?status=1', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -506,8 +637,8 @@ function editProduct(id) {
       const imgInput = document.getElementById('up-hinh-anh');
 
       const updateProduct = document.getElementById('update-product-button');
-      updateProduct.addEventListener('click', () => {
-
+      updateProduct.addEventListener('click', event => {
+        event.preventDefault();
 
         const file = imgInput.files[0];
         const reader = new FileReader();
@@ -518,8 +649,43 @@ function editProduct(id) {
     const selectedCategories = Array.from(categoryInput.selectedOptions).map(option => option.value);
     const selectedAuthors = Array.from(authorInput.selectedOptions).map(option => option.value);
 
+    if (productInput.value.trim() === '') {
+      alert('Tên sản phẩm không được để trống.');
+      return;
+    }
+
+    if (publisherInput.value === '') {
+      alert('Vui lòng chọn nhà xuất bản.');
+      return;
+    }
+
+    if (categoryInput.selectedOptions.length === 0) {
+      alert('Vui lòng chọn ít nhất một danh mục.');
+      return;
+    }
+
+    if (priceInput.value.trim() === '' || isNaN(priceInput.value)) {
+      alert('Giá sản phẩm không hợp lệ.');
+      return;
+    }
+
+    if (discountInput.value === '') {
+      alert('Vui lòng chọn giảm giá.');
+      return;
+    }
+
+    if (authorInput.selectedOptions.length === 0) {
+      alert('Vui lòng chọn ít nhất một tác giả.');
+      return;
+    }
+
+    if (!file) {
+      alert('Không có file được chọn.');
+      return;
+    }
+
           const updatedDataProduct = {
-            name: productInput.value,
+          name: productInput.value,
           publisher_id: publisherInput.value,
           image: fileContent,
           price: priceInput.value,
@@ -539,7 +705,8 @@ function editProduct(id) {
           })
             .then(response => response.json())
             .then(updatedCategory => {
-              
+              toast({ title: 'Success', message: 'Chỉnh sửa sản phẩm thành công!', type: 'success', duration: 3000 });
+              showProductActive();
             })
             .catch(error => {
               console.error('Lỗi khi cập nhật danh mục:', error);
@@ -567,6 +734,42 @@ function addProduct(event) {
   const imgInput = document.getElementById('up-hinh-anh');
   const file = imgInput.files[0];
   
+  if (productInput.value.trim() === '') {
+    console.error('Tên sản phẩm không được để trống.');
+    alert('Tên sản phẩm không được để trống.');
+    return;
+  }
+
+  if (publisherInput.value === '') {
+    console.error('Vui lòng chọn nhà xuất bản.');
+    alert('Vui lòng chọn nhà xuất bản.');
+    return;
+  }
+
+  if (categoryInput.selectedOptions.length === 0) {
+    console.error('Vui lòng chọn ít nhất một thuộc tính.');
+    alert('Vui lòng chọn ít nhất một thuộc tính.');
+    return;
+  }
+
+  if (authorInput.selectedOptions.length === 0) {
+    console.error('Vui lòng chọn ít nhất một tác giả.');
+    alert('Vui lòng chọn ít nhất một tác giả.');
+    return;
+  }
+
+  if (priceInput.value.trim() === '' || isNaN(priceInput.value)) {
+    console.error('Giá sản phẩm không hợp lệ.');
+    alert('Giá sản phẩm không hợp lệ.');
+    return;
+  }
+
+  if (discountInput.value === '') {
+    console.error('Vui lòng chọn giảm giá.');
+    alert('Vui lòng chọn giảm giá.');
+    return;
+  }
+
   if (!file) {
     console.error('Không có file được chọn.');
     alert('Không có file được chọn, xin hãy chọn file để tiếp tục');
@@ -593,7 +796,8 @@ function addProduct(event) {
       price: priceInput.value,
       discount: discountInput.value,
       category_ids: selectedCategories,
-      author_ids: selectedAuthors
+      author_ids: selectedAuthors,
+      status:1
     };
 
     const accessToken = localStorage.getItem('accessToken');
@@ -617,7 +821,8 @@ function addProduct(event) {
         return response.json();
       })
       .then(data => {
-        location.reload();
+        toast({ title: 'Success', message: 'Thêm sản phẩm thành công!', type: 'success', duration: 3000 });
+      showProductActive();
       })
       .catch(error => {
         // Xử lý lỗi nếu có
@@ -1011,45 +1216,6 @@ function openCreateUser() {
       item.style.display = "block"
   })
 }
-function addAccount(event) {
-
-
-  const emailInput = document.getElementById('email-input');
-  const passInput = document.getElementById('pass-input');
-    const newUser = {
-      email: emailInput.value,
-      password: passInput.value
-    };
-
-    const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken) {
-      console.error('Token not found in localStorage');
-      return;
-    }
-
-    fetch('http://localhost:8080/api/v1/users/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'token': accessToken,
-      },
-      body: JSON.stringify(newUser)
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Lỗi khi gửi yêu cầu.');
-        }
-        return response.json();
-      })
-      .then(data => {
-        location.reload();
-      })
-      .catch(error => {
-      });
-};
-addUser.addEventListener('click', addAccount);
-
-
 
 function signUpUserFormReset() {
     document.getElementById('fullname-user').value = ""
@@ -1110,7 +1276,18 @@ function showUserArr(arr) {
     document.getElementById('show-user').innerHTML = userHtml;
 }
 
-function showUser() {
+function handleUserStatusChange() {
+  var selectElement = document.getElementById("user-status");
+  var selectedValue = selectElement.value;
+
+  if (selectedValue === "active") {
+      showUserActive();
+  } else if (selectedValue === "inactive") {
+      showUserInactive();
+  }
+}
+
+function showUserActive() {
   const accessToken = localStorage.getItem('accessToken');
 
   // Kiểm tra xem có token trong localStorage hay không
@@ -1119,7 +1296,38 @@ function showUser() {
     return;
   }
 
-  fetch('http://localhost:8080/api/v1/users', {
+  fetch('http://localhost:8080/api/v1/users?status=1', {
+    // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+
+    console.log(data.content);
+    showUserArr(data.content);
+
+
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+    });
+    
+}
+
+function showUserInactive() {
+  const accessToken = localStorage.getItem('accessToken');
+
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  fetch('http://localhost:8080/api/v1/users?status=0', {
     // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
     method: 'GET',
     headers: {
@@ -1139,8 +1347,69 @@ function showUser() {
     });
     
 }
+window.onload = showUserActive();
 
-window.onload = showUser();
+function addAccount(event) {
+  event.preventDefault();
+  const emailInput = document.getElementById('email-input');
+  const passInput = document.getElementById('pass-input');
+  const errorText = document.getElementById('error-text');
+  const errorPass = document.getElementById('error-pass');
+
+  const newUser = {
+    email: emailInput.value,
+    password: passInput.value
+  };
+
+  // Kiểm tra định dạng email sử dụng regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(newUser.email)) {
+    errorText.innerText = 'Định dạng email không hợp lệ';
+    errorText.style.color = 'red';
+    return;
+  }
+
+  // Kiểm tra độ dài mật khẩu sử dụng regex
+  const passwordRegex = /^.{6,}$/;
+  if (!passwordRegex.test(newUser.password)) {
+    errorPass.innerText = 'Mật khẩu phải có ít nhất 6 ký tự';
+    errorPass.style.color = 'red';
+    return;
+  }
+
+  const accessToken = localStorage.getItem('accessToken');
+  if (!accessToken) {
+    errorText.innerText = 'Token not found in localStorage';
+    errorText.style.color = 'red';
+    return;
+  }
+
+  fetch('http://localhost:8080/api/v1/users/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'token': accessToken,
+    },
+    body: JSON.stringify(newUser)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Lỗi khi gửi yêu cầu.');
+      }
+      return response.json();
+    })
+    .then(data => {
+      toast({ title: 'Success', message: 'Thêm tài khoản thành công!', type: 'success', duration: 3000 });
+      showUserActive();
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+addUser.addEventListener('click', addAccount);
+
+
 
 function editRoleUser(id) {
   document.querySelector(".signup-role").classList.add("open");
@@ -1160,19 +1429,10 @@ function editRoleUser(id) {
     return;
   }
 
-  // Lắng nghe sự kiện onchange khi có tùy chọn được chọn
-  roleSelection.addEventListener('change', () => {
-    // Lấy giá trị của tùy chọn đã chọn
-    const selectedValue = roleSelection.value;
 
-    // In giá trị đã chọn
-    console.log(selectedValue);
-  });
-
-  // Lắng nghe sự kiện onclick cho phần tử có id là "btn-update-role"
   const updateRoleButton = document.getElementById('btn-update-role');
-  updateRoleButton.addEventListener('click', () => {
-    // Lấy giá trị chức vụ đã chọn
+  updateRoleButton.addEventListener('click', event => {
+    event.preventDefault();
     const roleID = roleSelection.value;
 
     // Tạo đối tượng dữ liệu được cập nhật
@@ -1191,8 +1451,8 @@ function editRoleUser(id) {
       .then(response => response.json())
       .then(data => {
         console.log('Chức vụ đã được cập nhật:', data.content);
-        // Tải lại trang sau khi hoàn thành yêu cầu PUT
-        location.reload();
+        toast({ title: 'Success', message: 'Thay đổi quyền thành công!', type: 'success', duration: 3000 });
+        showUser();
       })
       .catch(error => {
         console.error('Lỗi khi cập nhật chức vụ:', error);
@@ -1220,15 +1480,29 @@ function editPassUser(id) {
 
   // Lấy giá trị mật khẩu mới từ phần tử input
   const newPassword = document.getElementById('password-input').value;
+  const errorPass = document.getElementById('error-pass');
+  const passwordRegex = /^.{6,}$/;
 
   // Tạo đối tượng dữ liệu được cập nhật
-  const updatedData = {
-    password: newPassword
-  };
+ 
 
+  
   // Lắng nghe sự kiện onclick cho phần tử có id là "btn-update-pass"
   const updatePassButton = document.getElementById('btn-update-pass');
-  updatePassButton.addEventListener('click', () => {
+  updatePassButton.addEventListener('click', event => {
+    event.preventDefault();
+    
+    const newPassword = document.getElementById('password-input').value;
+    const updatedData = {
+      password: newPassword
+    };
+  // Kiểm tra tính hợp lệ của mật khẩu mới
+      if (!passwordRegex.test(newPassword)) {
+    const errorPass = document.getElementById('error-pass');
+    errorPass.innerText = 'Mật khẩu phải có ít nhất 6 ký tự';
+    errorPass.style.color = 'red';
+    return;
+      }
     // Gửi yêu cầu PATCH để cập nhật mật khẩu
     fetch(`http://localhost:8080/api/v1/users/change-password/${id}`, {
       method: 'PATCH',
@@ -1241,8 +1515,8 @@ function editPassUser(id) {
       .then(response => response.json())
       .then(data => {
         console.log('Mật khẩu đã được cập nhật:', data);
-        // Tải lại trang sau khi hoàn thành yêu cầu PATCH
-        location.reload();
+        toast({ title: 'Success', message: 'Cập nhật mật khẩu thành công!', type: 'success', duration: 3000 });
+      showUser();
       })
       .catch(error => {
         console.error('Lỗi khi cập nhật mật khẩu:', error);
@@ -1265,7 +1539,7 @@ function deleteUser(id) {
       }
 
       fetch(`http://localhost:8080/api/v1/users/user/${id}`, {
-        method: 'DELETE',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           token: accessToken,
@@ -1273,8 +1547,8 @@ function deleteUser(id) {
       })
         .then(response => response.json())
         .then(data => {
-          location.reload();
-          // Xử lý kết quả tìm kiếm đơn hàng ở đây
+          toast({ title: 'Success', message: 'Xóa tài khoản thành công!', type: 'success', duration: 3000 });
+          showUserActive();
         })
         .catch(error => {
           console.error('Failed to fetch data:', error);
@@ -1322,14 +1596,18 @@ function editUser(id) {
       const emailInputUser = document.getElementById('email-user');
       const sdtInputUser = document.getElementById('sdt-user');
 
-      updateUser.addEventListener('click', () => {
+      
+
+      updateUser.addEventListener('click', event => {
+        event.preventDefault();
+        
+        
         const file = imageInputUser.files[0];
         const reader = new FileReader();
 
         reader.onload = (e) => {
           const fileContent = e.target.result;
-
-
+          
           const updatedDataUser = {
             fullname: nameInputUser.value,
             image: fileContent,
@@ -1349,7 +1627,8 @@ function editUser(id) {
           })
             .then(response => response.json())
             .then(updatedCategory => {
-              location.reload();
+              toast({ title: 'Success', message: 'Cập nhật thông tin thành công!', type: 'success', duration: 3000 });
+            showUserActive();
             })
             .catch(error => {
               console.error('Lỗi khi cập nhật danh mục:', error);
@@ -1414,7 +1693,18 @@ function showCategoryArr(arr) {
     document.getElementById('show-category').innerHTML = categoryHtml;
 }
 
-function showCategory() {
+function handleUserStatusChangeCate() {
+  var selectElement = document.getElementById("categories-status");
+  var selectedValue = selectElement.value;
+
+  if (selectedValue === "active") {
+    showCategoryActive();
+  } else if (selectedValue === "inactive") {
+    showCategoryInactive();
+  }
+}
+
+function showCategoryActive() {
   const accessToken = localStorage.getItem('accessToken');
 
   // Kiểm tra xem có token trong localStorage hay không
@@ -1423,7 +1713,7 @@ function showCategory() {
     return;
   }
 
-  fetch('http://localhost:8080/api/v1/categories', {
+  fetch('http://localhost:8080/api/v1/categories?status=1', {
     // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
     method: 'GET',
     headers: {
@@ -1444,7 +1734,39 @@ function showCategory() {
     
 }
 
-window.onload = showCategory();
+function showCategoryInactive() {
+  const accessToken = localStorage.getItem('accessToken');
+
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  fetch('http://localhost:8080/api/v1/categories?status=0', {
+    // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.content);
+    showCategoryArr(data.content);
+
+
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+    });
+    
+}
+window.onload = showCategoryActive();
+
+
+
 
 function deleteCategory(id) {
     if (confirm("Bạn có chắc muốn xóa?")) {
@@ -1457,8 +1779,8 @@ function deleteCategory(id) {
         return;
       }
 
-      fetch(`http://localhost:8080/api/v1/categories/category/${id}`, {
-        method: 'DELETE',
+      fetch(`http://localhost:8080/api/v1/categories/category-delete/${id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           token: accessToken,
@@ -1466,8 +1788,8 @@ function deleteCategory(id) {
       })
         .then(response => response.json())
         .then(data => {
-          location.reload();
-          // Xử lý kết quả tìm kiếm đơn hàng ở đây
+          toast({ title: 'Success', message: 'Xóa thể loại thành công!', type: 'success', duration: 3000 });
+          showCategoryActive();
         })
         .catch(error => {
           console.error('Failed to fetch data:', error);
@@ -1508,19 +1830,20 @@ function editCategory(id) {
       const nameInputCategory = document.getElementById('fullname-category');
       const imageInputCategory = document.getElementById('up-hinh-anh-category');
 
-      updateCategory.addEventListener('click', () => {
+      updateCategory.addEventListener('click', event => {
+        event.preventDefault();
         const file = imageInputCategory.files[0];
         const reader = new FileReader();
 
         reader.onload = (e) => {
           const fileContent = e.target.result;
 
-
+          
           const updatedDataCategory = {
             name: nameInputCategory.value,
             image: fileContent
           };
-
+          console.log(updatedDataCategory);
           // Gửi yêu cầu PUT để cập nhật danh mục
           fetch(`http://localhost:8080/api/v1/categories/category/${id}`, {
             method: 'PUT',
@@ -1532,7 +1855,8 @@ function editCategory(id) {
           })
             .then(response => response.json())
             .then(updatedCategory => {
-              location.reload();
+              toast({ title: 'Success', message: 'Chỉnh sửa thể loại thành công!', type: 'success', duration: 3000 });
+              showCategoryActive();
             })
             .catch(error => {
               console.error('Lỗi khi cập nhật danh mục:', error);
@@ -1570,9 +1894,16 @@ function addCategory(event) {
   const nameInput = document.getElementById('fullname-category');
   const imgInput = document.getElementById('up-hinh-anh-category');
   const file = imgInput.files[0];
+  const regex = /^\s*$/;
     if (!file) {
     console.error('Không có file được chọn.');
     alert('Không có file được chọn, xin hãy chọn file để tiếp tục');
+    return;
+  }
+
+  if (regex.test(nameInput.value)) {
+    console.error('Tên không được để trống.');
+    alert('Tên không được để trống, xin hãy nhập tên để tiếp tục');
     return;
   }
 
@@ -1585,6 +1916,7 @@ function addCategory(event) {
     const newCategory = {
       name: nameInput.value,
       image: base64Data,
+      status:1
     };
 
     const accessToken = localStorage.getItem('accessToken');
@@ -1594,7 +1926,7 @@ function addCategory(event) {
     }
 
     fetch('http://localhost:8080/api/v1/categories/category', {
-      method: 'PUT',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'token': accessToken,
@@ -1608,7 +1940,8 @@ function addCategory(event) {
         return response.json();
       })
       .then(data => {
-        location.reload();
+        toast({ title: 'Success', message: 'Thêm thể loại thành công!', type: 'success', duration: 3000 });
+          showCategoryActive();
       })
       .catch(error => {
   console.error('Lỗi khi gửi yêu cầu:', error);
@@ -1675,8 +2008,18 @@ function showDiscountArr(arr) {
   document.getElementById('show-discount').innerHTML = discountHtml;
 }
 
+function handleUserStatusChangeDiscount() {
+  var selectElement = document.getElementById("user-status");
+  var selectedValue = selectElement.value;
 
-function showDiscount() {
+  if (selectedValue === "active") {
+      showDiscountValid();
+  } else if (selectedValue === "inactive") {
+      showDiscountNotvalid();
+  }
+}
+
+function showDiscountValid() {
   const accessToken = localStorage.getItem('accessToken');
 
   // Kiểm tra xem có token trong localStorage hay không
@@ -1685,7 +2028,7 @@ function showDiscount() {
     return;
   }
 
-  fetch('http://localhost:8080/api/v1/discounts/', {
+  fetch('http://localhost:8080/api/v1/discounts/:status=0', {
     // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
     method: 'GET',
     headers: {
@@ -1702,7 +2045,32 @@ function showDiscount() {
     });
 }
 
-window.onload = showDiscount();
+function showDiscountNotvalid() {
+  const accessToken = localStorage.getItem('accessToken');
+
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  fetch('http://localhost:8080/api/v1/discounts/:status=1', {
+    // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+    showDiscountArr(data.content.discountList);
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+    });
+}
+window.onload = showDiscountValid();
 
 function deleteDiscount(id) {
     if (confirm("Bạn có chắc muốn xóa?")) {
@@ -1716,7 +2084,7 @@ function deleteDiscount(id) {
       }
 
       fetch(`http://localhost:8080/api/v1/discounts/${id}`, {
-        method: 'DELETE',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           token: accessToken,
@@ -1724,8 +2092,9 @@ function deleteDiscount(id) {
       })
         .then(response => response.json())
         .then(data => {
-          location.reload();
-          // Xử lý kết quả tìm kiếm đơn hàng ở đây
+          console.log(data.content);
+          toast({ title: 'Success', message: 'Xóa khuyến mãi thành công!', type: 'success', duration: 3000 });
+          showDiscountValid();
         })
         .catch(error => {
           console.error('Failed to fetch data:', error);
@@ -1763,23 +2132,55 @@ function editDiscount(id) {
     .then(response => response.json())
     .then(data => {
 
-      const nameInputDiscount = document.getElementById('fullname-km');
+const nameInputDiscount = document.getElementById('fullname-km');
 const valueInputDiscount = document.getElementById('value-km');
 const typeInputDiscount = document.getElementById('loai-km');
 const startInputDiscount = document.getElementById('start-km');
 const endInputDiscount = document.getElementById('end-km');
 
-    document.getElementById("fullname-km").value =  data.content.discount.discount_code;
-    document.getElementById("value-km").value =  data.content.discount.discount_value;
-    document.getElementById("loai-km").value =  data.content.discount.type;
-    document.getElementById("start-km").value =  data.content.discount.begin_date;
+    document.getElementById("fullname-km").value =  data.content.discountList.discount_code;
+    document.getElementById("value-km").value =  data.content.discountList.discount_value;
+    document.getElementById("loai-km").value =  data.content.discountList.type;
+    document.getElementById("start-km").value =  data.content.discountList.begin_date;
+    document.getElementById("end-km").value =  data.content.discountList.finish_date;
 
-    document.getElementById("end-km").value =  data.content.discount.finish_date;
+    document.getElementById("start-km").value = formatDate(data.content.discountList.begin_date);
+    document.getElementById("end-km").value = formatDate(data.content.discountList.finish_date);
     let updateDiscount = document.getElementById('btn-update-discount');
-      updateDiscount.addEventListener('click', () => {
+      updateDiscount.addEventListener('click', event => {
+        event.preventDefault();
+        const nameRegex = /^[A-Z0-9]{3,}$/i;
+  const valueRegex = /^\d+$/; // Regex kiểm tra số dương
+
+  if (!nameRegex.test(nameInputDiscount.value)) {
+    showError(nameInputDiscount, 'Vui lòng nhập họ và tên hợp lệ (tối thiểu 3 ký tự và chỉ chứa chữ cái và chữ số).');
+    return;
+  }
+
+  if (!valueRegex.test(valueInputDiscount.value)) {
+    showError(valueInputDiscount, 'Vui lòng nhập giá trị mã khuyến mãi là một số dương.');
+    return;
+  }
+
+  if (typeInputDiscount.value !== 'PR' && typeInputDiscount.value !== 'AR') {
+    showError(typeInputDiscount, 'Vui lòng chọn loại mã khuyến mãi là "PR" hoặc "AR".');
+    return;
+  }
+
+  if (startInputDiscount.value.length === 0 || endInputDiscount.value.length === 0) {
+    showError(startInputDiscount, 'Vui lòng chọn ngày bắt đầu và ngày kết thúc');
+    return;
+  }
+
+  const startDate = new Date(startInputDiscount.value);
+  const endDate = new Date(endInputDiscount.value);
+
+  if (startDate >= endDate) {
+    showError(startInputDiscount, 'Ngày bắt đầu phải sớm hơn ngày kết thúc');
+    return;
+  }
 
         const updatedDataDiscount = {
-          discount_code: nameInputDiscount.value,
           discount_value: valueInputDiscount.value,
           type: typeInputDiscount.value,
           begin_date: startInputDiscount.value,
@@ -1796,7 +2197,8 @@ const endInputDiscount = document.getElementById('end-km');
         })
           .then(response => response.json())
           .then(updatedCategory => {
-            // location.reload();
+            toast({ title: 'Success', message: 'Chỉnh sửa mã khuyến mãi thành công!', type: 'success', duration: 3000 });
+            showDiscountValid();
           })
           .catch(error => {
             console.error('Lỗi khi cập nhật danh mục:', error);
@@ -1809,6 +2211,13 @@ const endInputDiscount = document.getElementById('end-km');
 
 }
 
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 function addDiscount(event) {
   event.preventDefault();
@@ -1819,24 +2228,44 @@ function addDiscount(event) {
   const startInputDiscount = document.getElementById('start-km');
   const endInputDiscount = document.getElementById('end-km');
 
-  if (nameInputDiscount.value.length == 0) {
-    alert('Vui lòng nhập họ và tên');
-    nameInputDiscount.focus();
-    return; 
-  } else if (nameInputDiscount.value.length < 3) {
-    nameInputDiscount.value = '';
-    alert('Vui lòng nhập họ và tên lớn hơn 3 kí tự');
-    return; 
+  const nameRegex = /^[A-Z0-9]{3,}$/i;
+  const valueRegex = /^\d+$/; // Regex kiểm tra số dương
+
+  if (!nameRegex.test(nameInputDiscount.value)) {
+    showError(nameInputDiscount, 'Vui lòng nhập họ và tên hợp lệ (tối thiểu 3 ký tự và chỉ chứa chữ cái và chữ số).');
+    return;
   }
 
+  if (!valueRegex.test(valueInputDiscount.value)) {
+    showError(valueInputDiscount, 'Vui lòng nhập giá trị mã khuyến mãi là một số dương.');
+    return;
+  }
 
-  
+  if (typeInputDiscount.value !== 'PR' && typeInputDiscount.value !== 'AR') {
+    showError(typeInputDiscount, 'Vui lòng chọn loại mã khuyến mãi là "PR" hoặc "AR".');
+    return;
+  }
+
+  if (startInputDiscount.value.length === 0 || endInputDiscount.value.length === 0) {
+    showError(startInputDiscount, 'Vui lòng chọn ngày bắt đầu và ngày kết thúc');
+    return;
+  }
+
+  const startDate = new Date(startInputDiscount.value);
+  const endDate = new Date(endInputDiscount.value);
+
+  if (startDate >= endDate) {
+    showError(startInputDiscount, 'Ngày bắt đầu phải sớm hơn ngày kết thúc');
+    return;
+  }
+
     const newDiscount = {
       discount_code: nameInputDiscount.value,
       discount_value: valueInputDiscount.value,
       type: typeInputDiscount.value,
       begin_date: startInputDiscount.value,
-      finish_date: endInputDiscount.value
+      finish_date: endInputDiscount.value,
+      status:0
     };
 
     const accessToken = localStorage.getItem('accessToken');
@@ -1860,13 +2289,23 @@ function addDiscount(event) {
         return response.json();
       })
       .then(data => {
-        location.reload();
+        console.log(data.content);
+        toast({ title: 'Success', message: 'Thêm mã khuyến mãi thành công!', type: 'success', duration: 3000 });
+        showDiscountValid();
       })
       .catch(error => {
       });
 };
 addDiscountBtn.addEventListener('click', addDiscount);
 
+
+function showError(element, message) {
+  element.style.borderColor = 'red';
+  element.style.color = 'red';
+  element.setCustomValidity(message);
+  element.reportValidity();
+  element.focus();
+}
 // PHIEU NHAP 
 let addEntryBtn = document.getElementById('signup-entry-button');
 let updateEntry = document.getElementById("btn-update-entry")
@@ -2075,9 +2514,6 @@ function showEntryArr(arr) {
           <button class="btn-edit" id="edit-entry" onclick='searchDetailEntryByID(${entry.id})' ><i class="material-symbols-outlined">
           edit_note
           </i></button>
-          <button class="btn-delete" id="delete-entry" onclick="deleteEntry(${entry.id})"><i class="material-symbols-outlined">
-          delete
-          </i></button>
           </td>
       </tr>`;
       });
@@ -2212,6 +2648,24 @@ function addEntry(event) {
   console.log("staffInputEntry value:", staffInputEntry.value);
   console.log("supplierInputEntry value:", supplierInputEntry.value);
 
+  if (staffInputEntry.value === '') {
+  const staffFormMessage = document.querySelector('#staff_id + .form-message');
+  const brElement = document.createElement('br');
+  staffFormMessage.textContent = 'Vui lòng chọn Nhân viên nhập.';
+  staffFormMessage.style.color = 'red';
+  staffFormMessage.insertBefore(brElement, staffFormMessage.firstChild);
+  return;
+}
+
+if (supplierInputEntry.value === '') {
+  const supplierFormMessage = document.querySelector('#supplier_id + .form-message');
+  const brElement = document.createElement('br');
+  supplierFormMessage.textContent = 'Vui lòng chọn Nhà cung cấp.';
+  supplierFormMessage.style.color = 'red';
+  supplierFormMessage.insertBefore(brElement, supplierFormMessage.firstChild);
+  return;
+}
+
   // Khởi tạo mảng detailEntrySlip rỗng
   const detailEntrySlip = [];
 
@@ -2223,11 +2677,22 @@ function addEntry(event) {
     const productID = document.getElementById(`product_id_${i}`).value;
     const entryPrice = document.getElementById(`entry_slip_details_${i}`).value;
     const quantity = document.getElementById(`quantity_${i}`).value;
-  
-    console.log(`product_id_${i} value:`, productID);
-    console.log(`entry_slip_details_${i} value:`, entryPrice);
-    console.log(`quantity_${i} value:`, quantity);
-  
+
+    const priceRegex = /^\d+(\.\d{1,2})?$/; // Biểu thức chính quy kiểm tra giá trị số có tối đa 2 chữ số thập phân
+  const quantityRegex = /^\d+$/; // Biểu thức chính quy kiểm tra giá trị số nguyên dương
+  if (!priceRegex.test(entryPrice)) {
+    // Hiển thị thông báo lỗi cho entryPrice
+    const entryPriceErrorMessage = document.querySelector(`#entry_slip_details_${i} + .form-message`);
+    entryPriceErrorMessage.textContent = 'Vui lòng nhập giá trị hợp lệ.';
+    entryPriceErrorMessage.style.color = 'red';
+  }
+  if (!quantityRegex.test(quantity)) {
+    // Hiển thị thông báo lỗi cho quantity
+    const quantityErrorMessage = document.querySelector(`#quantity_${i} + .form-message`);
+    quantityErrorMessage.textContent = 'Vui lòng nhập số lượng hợp lệ.';
+    quantityErrorMessage.style.color = 'red';
+  }
+
     // Tạo một đối tượng chi tiết phiếu nhập mới với thông tin đã lấy được
     const entryDetail = {
       product_id: productID,
@@ -2247,6 +2712,13 @@ function addEntry(event) {
   
   console.log("detailEntrySlip:", detailEntrySlip);
   console.log("totalPrice:", totalPrice);
+
+  if (detailEntrySlip.length === 0) {
+    const errorMessage = document.querySelector('#errorMessage');
+    errorMessage.textContent = 'Hãy bấm dấu cộng để thêm sản phẩm';
+    errorMessage.style.display = 'block';
+    return;
+  }
 
   const currentDate = new Date();
   const dateEntry = currentDate.toISOString().split('T')[0]; // Lấy ngày tháng năm từ currentDate
@@ -2280,7 +2752,8 @@ function addEntry(event) {
       return response.json();
     })
     .then(data => {
-      location.reload();
+      toast({ title: 'Success', message: 'Thêm phiếu nhập thành công!', type: 'success', duration: 3000 });
+      showEntry();
     })
     .catch(error => {
       // Xử lý lỗi nếu có
@@ -2392,9 +2865,8 @@ function deleteSupplier(id) {
       })
         .then(response => response.json())
         .then(data => {
-          console.log('Xóa thành công');
-          console.log('Kết quả tìm kiếm bằng mã:', data.content.suppliersList);
-          location.reload();
+          toast({ title: 'Success', message: 'Xóa nhà cung cấp thành công!', type: 'success', duration: 3000 });
+          showSupplier();
           // Xử lý kết quả tìm kiếm đơn hàng ở đây
         })
         .catch(error => {
@@ -2404,15 +2876,15 @@ function deleteSupplier(id) {
 }
 
 function editSupplier(id) {
-    document.querySelector(".signup-supplier").classList.add("open");
-    document.querySelectorAll(".add-supplier-e").forEach(item => {
-        item.style.display = "none"
-    })
-    document.querySelectorAll(".edit-supplier-e").forEach(item => {
-        item.style.display = "block"
-    })
+  document.querySelector('.signup-supplier').classList.add('open');
+  document.querySelectorAll('.add-supplier-e').forEach(item => {
+    item.style.display = 'none';
+  });
+  document.querySelectorAll('.edit-supplier-e').forEach(item => {
+    item.style.display = 'block';
+  });
 
-    const accessToken = localStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
 
   // Kiểm tra xem có token trong localStorage hay không
   if (!accessToken) {
@@ -2430,34 +2902,61 @@ function editSupplier(id) {
   })
     .then(response => response.json())
     .then(data => {
+      console.log(data.content);
+      const nameInputSupplier = document.getElementById('fullname-ncc');
+      const emailInputSupplier = document.getElementById('email-ncc');
+      const sdtInputSupplier = document.getElementById('sdt-ncc');
 
 
-    document.getElementById("fullname-ncc").value =  data.content.supplier.name;
-    const nameInputSupplier = document.getElementById('fullname-ncc');
+      const errorName = document.getElementById('error-name');
+      const errorEmail = document.getElementById('error-email');
+      const errorSdt = document.getElementById('error-sdt');
 
-    document.getElementById("email-ncc").value =  data.content.supplier.email;
-    const emailInputSupplier = document.getElementById('email-ncc');
-    
-    document.getElementById("sdt-ncc").value =  data.content.supplier.phone_number;
-    const sdtInputSupplier = document.getElementById('sdt-ncc');
+      
 
-      updateSupplier.addEventListener('click', () => {
+      const nameRegex = /^[a-zA-Z\s]+$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const sdtRegex = /^\d{10,11}$/;
 
-        if (nameInputSupplier.value.length == 0) {
-          alert('Vui lòng nhập họ và tên');
+      nameInputSupplier.value = data.content.supplier.name;
+      emailInputSupplier.value = data.content.supplier.email;
+      sdtInputSupplier.value = data.content.supplier.phone_number;
+
+      updateSupplier.addEventListener('click', event => {
+        event.preventDefault()
+        const nameValue = nameInputSupplier.value;
+        const emailValue = emailInputSupplier.value;
+        const sdtValue = sdtInputSupplier.value;
+
+
+      errorName.textContent = '';
+      errorEmail.textContent = '';
+      errorSdt.textContent = '';
+
+        if (!nameRegex.test(nameValue)) {
+          errorName.textContent = 'Vui lòng nhập họ và tên hợp lệ';
           nameInputSupplier.focus();
-          return; 
-          } else if (nameInputSupplier.value.length < 3) {
-            nameInputSupplier.value = '';
-          alert('Vui lòng nhập họ và tên lớn hơn 3 kí tự');
-          return; 
-          }
+          return;
+        }
+
+        if (!emailRegex.test(emailValue)) {
+          errorEmail.textContent = 'Vui lòng nhập email hợp lệ';
+          emailInputSupplier.focus();
+          return;
+        }
+
+        if (!sdtRegex.test(sdtValue)) {
+          errorSdt.textContent = 'Vui lòng nhập số điện thoại hợp lệ';
+          sdtInputSupplier.focus();
+          return;
+        }
 
         const updatedDataSupplier = {
-          name: nameInputSupplier.value,
-          email: emailInputSupplier.value,
-          phone_number: sdtInputSupplier.value
+          name: nameValue,
+          email: emailValue,
+          phone_number: sdtValue
         };
+
         // Gửi yêu cầu PUT để cập nhật danh mục
         fetch(`http://localhost:8080/api/v1/suppliers/supplier/${id}`, {
           method: 'PUT',
@@ -2469,7 +2968,9 @@ function editSupplier(id) {
         })
           .then(response => response.json())
           .then(updatedCategory => {
-            location.reload;
+
+            toast({ title: 'Success', message: 'Chỉnh sửa nhà cung cấp thành công!', type: 'success', duration: 3000 });
+            showSupplier();
           })
           .catch(error => {
             console.error('Lỗi khi cập nhật danh mục:', error);
@@ -2479,7 +2980,6 @@ function editSupplier(id) {
     .catch(error => {
       console.error('Lỗi khi tìm kiếm danh mục:', error);
     });
-
 }
 
 
@@ -2490,70 +2990,72 @@ function addSupplier(event) {
   const emailInputSupplier = document.getElementById('email-ncc');
   const sdtInputSupplier = document.getElementById('sdt-ncc');
 
-  if (nameInputSupplier.value.length == 0) {
-    alert('Vui lòng nhập họ và tên');
+  const errorName = document.getElementById('error-name');
+  const errorEmail = document.getElementById('error-email');
+  const errorSdt = document.getElementById('error-sdt');
+
+  const nameRegex = /^[a-zA-Z\s]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const sdtRegex = /^\d{10,11}$/;
+
+  errorName.textContent = '';
+  errorEmail.textContent = '';
+  errorSdt.textContent = '';
+
+  if (!nameRegex.test(nameInputSupplier.value)) {
+    errorName.textContent = 'Vui lòng nhập họ và tên hợp lệ';
     nameInputSupplier.focus();
     return; 
-  } else if (nameInputSupplier.value.length < 3) {
-    nameInputSupplier.value = '';
-    alert('Vui lòng nhập họ và tên lớn hơn 3 kí tự');
-    return; 
   }
 
-  if (emailInputSupplier.value.length == 0) {
-    alert('Vui lòng nhập họ và tên');
+  if (!emailRegex.test(emailInputSupplier.value)) {
+    errorEmail.textContent = 'Vui lòng nhập email hợp lệ';
     emailInputSupplier.focus();
     return; 
-  } else if (emailInputSupplier.value.length < 3) {
-    emailInputSupplier.value = '';
-    alert('Vui lòng nhập họ và tên lớn hơn 3 kí tự');
-    return; 
   }
 
-  if (sdtInputSupplier.value.length == 0) {
-    alert('Vui lòng nhập họ và tên');
+  if (!sdtRegex.test(sdtInputSupplier.value)) {
+    errorSdt.textContent = 'Vui lòng nhập số điện thoại hợp lệ';
     sdtInputSupplier.focus();
-    return; 
-  } else if (sdtInputSupplier.value.length < 3) {
-    sdtInputSupplier.value = '';
-    alert('Vui lòng nhập họ và tên lớn hơn 3 kí tự');
     return; 
   }
   
-    const newSupplier = {
-      name: nameInputSupplier.value,
-      email: emailInputSupplier.value,
-      phone_number:sdtInputSupplier.value
-    };
+  const newSupplier = {
+    name: nameInputSupplier.value,
+    email: emailInputSupplier.value,
+    phone_number: sdtInputSupplier.value
+  };
 
-    const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken) {
-      console.error('Token not found in localStorage');
-      return;
-    }
+  const accessToken = localStorage.getItem('accessToken');
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
 
-    fetch('http://localhost:8080/api/v1/suppliers/supplier', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'token': accessToken,
-      },
-      body: JSON.stringify(newSupplier)
+  fetch('http://localhost:8080/api/v1/suppliers/supplier', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'token': accessToken,
+    },
+    body: JSON.stringify(newSupplier)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Lỗi khi gửi yêu cầu.');
+      }
+      return response.json();
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Lỗi khi gửi yêu cầu.');
-        }
-        return response.json();
-      })
-      .then(data => {
-        location.reload();
-      })
-      .catch(error => {
-      });
-};
-addSupplierBtn.addEventListener('click', addSupplier);
+    .then(data => {
+      toast({ title: 'Success', message: 'Thêm nhà cung cấp thành công!', type: 'success', duration: 3000 });
+      showSupplier();
+    })
+    .catch(error => {
+      console.error('Lỗi khi thêm nhà cung cấp:', error);
+    });
+}
 
+addSupplierBtn.addEventListener('click', addSupplier);
 
 // // NHÀ XUẤT BẢN
 let addPublisherBtn = document.getElementById('signup-publisher-button');
@@ -2620,7 +3122,7 @@ function showPublisher() {
   })
     .then(response => response.json())
     .then(data => {
-
+      console.log(data.content);
     showPublisherArr(data.content);
 
 
@@ -2655,7 +3157,8 @@ function deletePublisher(id) {
         .then(data => {
           console.log('Xóa thành công');
           console.log('Kết quả tìm kiếm bằng mã:', data.content);
-          location.reload();
+          toast({ title: 'Success', message: 'Xóa nhà xuất bản thành công!', type: 'success', duration: 3000 });
+          showPublisher();
           // Xử lý kết quả tìm kiếm đơn hàng ở đây
         })
         .catch(error => {
@@ -2695,14 +3198,15 @@ function editPublisher(id) {
       document.getElementById("fullname-nxb").value =  data.content.name;
       const nameInputPublisher = document.getElementById('fullname-nxb');
 
-      updatePublisher.addEventListener('click', () => {
+      updatePublisher.addEventListener('click', event => {
+        event.preventDefault();
 
         if (nameInputPublisher.value.length == 0) {
           alert('Vui lòng nhập họ và tên');
           nameInputPublisher.focus();
           return; 
           } else if (nameInputPublisher.value.length < 3) {
-            nameInputPublisher.value = '';
+          nameInputPublisher.value = '';
           alert('Vui lòng nhập họ và tên lớn hơn 3 kí tự');
           return; 
           }
@@ -2721,7 +3225,8 @@ function editPublisher(id) {
         })
           .then(response => response.json())
           .then(updatedCategory => {
-            location.reload;
+            toast({ title: 'Success', message: 'Chỉnh sửa nhà xuất bản thành công!', type: 'success', duration: 3000 });
+            showPublisher();
           })
           .catch(error => {
             console.error('Lỗi khi cập nhật danh mục:', error);
@@ -2774,7 +3279,8 @@ function addPublisher(event) {
         return response.json();
       })
       .then(data => {
-        location.reload();
+        toast({ title: 'Success', message: 'Thêm nhà xuất bản thành công!', type: 'success', duration: 3000 });
+        showPublisher();
       })
       .catch(error => {
       });
@@ -2830,7 +3336,7 @@ function showAuthorArr(arr) {
     document.getElementById('show-author').innerHTML = authorHtml;
 }
 
-function showAuthor() {
+function showAuthorActive() {
   const accessToken = localStorage.getItem('accessToken');
 
   // Kiểm tra xem có token trong localStorage hay không
@@ -2839,7 +3345,7 @@ function showAuthor() {
     return;
   }
 
-  fetch('http://localhost:8080/api/v1/authors', {
+  fetch('http://localhost:8080/api/v1/authors?status=1', {
     // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
     method: 'GET',
     headers: {
@@ -2860,7 +3366,48 @@ function showAuthor() {
     
 }
 
-window.onload = showAuthor();
+function showAuthorInactive() {
+  const accessToken = localStorage.getItem('accessToken');
+
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  fetch('http://localhost:8080/api/v1/authors?status=0', {
+    // SỬ DỤNG PHƯƠNG THỨC GET ĐỂ LẤY SẢN PHẨM
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+
+    showAuthorArr(data.content);
+
+
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+    });
+    
+}
+window.onload = showAuthorActive();
+
+
+function handleUserStatusChangeAuthor() {
+  var selectElement = document.getElementById("author-status");
+  var selectedValue = selectElement.value;
+
+  if (selectedValue === "active") {
+      showAuthorActive();
+  } else if (selectedValue === "inactive") {
+      showAuthorInactive();
+  }
+}
 
 function deleteAuthor(id) {
     if (confirm("Bạn có chắc muốn xóa?")) {
@@ -2873,8 +3420,8 @@ function deleteAuthor(id) {
         return;
       }
 
-      fetch(`http://localhost:8080/api/v1/authors/author/${id}`, {
-        method: 'DELETE',
+      fetch(`http://localhost:8080/api/v1/authors/author-delete/${id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           token: accessToken,
@@ -2884,7 +3431,8 @@ function deleteAuthor(id) {
         .then(data => {
           console.log('Xóa thành công');
           console.log('Kết quả tìm kiếm bằng mã:', data.content);
-          location.reload();
+          toast({ title: 'Success', message: 'Xóa tác giả thành công!', type: 'success', duration: 3000 });
+          showAuthorActive();
           // Xử lý kết quả tìm kiếm đơn hàng ở đây
         })
         .catch(error => {
@@ -2893,7 +3441,7 @@ function deleteAuthor(id) {
     }
 }
 
-let indexFlag;
+
 function editAuthor(id) {
     document.querySelector(".signup-author").classList.add("open");
     document.querySelectorAll(".add-author-e").forEach(item => {
@@ -2925,8 +3473,8 @@ function editAuthor(id) {
       document.getElementById("fullname").value =  data.content.name;
       const nameInput = document.getElementById('fullname');
 
-      updateAuthor.addEventListener('click', () => {
-
+      updateAuthor.addEventListener('click', event => {
+        event.preventDefault();
         if (nameInput.value.length == 0) {
           alert('Vui lòng nhập họ và tên');
           nameInput.focus();
@@ -2951,7 +3499,8 @@ function editAuthor(id) {
         })
           .then(response => response.json())
           .then(updatedCategory => {
-            location.reload;
+            toast({ title: 'Success', message: 'Chỉnh sửa tác giả thành công!', type: 'success', duration: 3000 });
+            showAuthorActive();
           })
           .catch(error => {
             console.error('Lỗi khi cập nhật danh mục:', error);
@@ -2981,6 +3530,7 @@ function addAuthor(event) {
   
     const newAuthor = {
       name: nameInput.value,
+      status:1
     };
 
     const accessToken = localStorage.getItem('accessToken');
@@ -3004,7 +3554,8 @@ function addAuthor(event) {
         return response.json();
       })
       .then(data => {
-        location.reload();
+        toast({ title: 'Success', message: 'Thêm tác giả thành công!', type: 'success', duration: 3000 });
+        showAuthorActive();
       })
       .catch(error => {
       });

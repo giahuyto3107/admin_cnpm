@@ -175,18 +175,18 @@
             <div class="section active">
                 <h1 class="page-title">Trang tổng quát của FAHASA</h1>
                 <div class="cards">
-                    <div class="card-single">
+                    <div class="card-single" id="card-user">
                         <div class="box">
                           <div class="flip-card">
                             <div class="flip-card-inner">
                               <div class="flip-card-front">
                                 <div class="on-box">
-                                  <img src="/pic/img1.jpg" >
+                                  <img src="/pic/img1.png" >
                                   <h3>Khách hàng</h3>
                                 </div>
                               </div>
                               <div class="flip-card-back">
-                                <h2 id="amount-user"></h2>
+                                <h2 id="amount-user">5</h2>
                               </div>
                             </div>
                           </div>
@@ -198,7 +198,7 @@
                             <div class="flip-card-inner">
                               <div class="flip-card-front">
                                 <div class="on-box">
-                                   <img src="/pic/img2.jpg" >
+                                   <img src="/pic/img2.png" >
                                     <h3>Sản phẩm</h3> 
                                 </div>
                               </div>
@@ -215,12 +215,12 @@
                             <div class="flip-card-inner">
                               <div class="flip-card-front">
                                 <div class="on-box">
-                                   <img src="/pic/img3.jpg">
+                                   <img src="/pic/img3.png">
                                     <h3>Doanh thu</h3> 
                                 </div>
                               </div>
                               <div class="flip-card-back">
-                                <h2 id="doanh-thu"></h2>
+                                <h2 id="doanh-thu">7.160.000₫</h2>
                               </div>
                             </div>
                           </div>
@@ -232,13 +232,9 @@
              <div class="section product-all">
                 <div class="admin-control">
                     <div class="admin-control-left">
-                        <select name="the-loai" id="the-loai" onchange="showProduct()">
-                            <option>Tất cả</option>
-                            <option>Tâm lý học</option>
-                            <option>Tâm linh - tôn giáo</option>
-                            <option>Lịch sử Việt Nam</option>
-                            <option>Ngôn tình</option>
-                            <option>Đã xóa</option>
+                        <select name="the-loai" id="product-change" onchange="handleUserStatusChangeProduct()">
+                            <option value="active">Hoạt động</option>
+                            <option value="inactive">Đã xóa</option>
                         </select>
                     </div>
                     <div class="admin-control-center">
@@ -246,13 +242,11 @@
                             <span class="search-btn"><i class="search-btn"><i class="material-symbols-outlined">
                                 search
                                 </i></i></span>
-                            <input id="form-search-product" type="text" class="form-search-input" placeholder="Tìm kiếm....." oninput="showProduct()">
+                            <input id="form-search-product" type="text" class="form-search-input" placeholder="Tìm kiếm....." oninput="showProductActive()">
                         </form>
                     </div>
                     <div class="admin-control-right">
-                        <button class="btn-control-large" id="btn-cancel-product" onclick="cancelSearchProduct()"><i class="material-symbols-outlined">
-                            restart_alt
-                            </i><span> Làm mới</span></button>
+                        
                         <button class="btn-control-large" id="btn-add-product"><i class="material-symbols-outlined">
                             add
                             </i> <span> Thêm sản phẩm mới</span></button>                  
@@ -273,7 +267,10 @@
                     
                     <div class="admin-control-right">
                         </form>      
-    
+                        <select id="user-status" onchange="handleUserStatusChange()">
+                            <option value="active">Hoạt động</option>
+                            <option value="inactive">Đã xóa</option>
+                        </select>
                         <button id="btn-add-user" class="btn-control-large" onclick="openCreateUser()"><i class="material-symbols-outlined">
                             add
                             </i> <span>Thêm tài khoản</span></button>          
@@ -444,7 +441,10 @@
                     
                     <div class="admin-control-right">
                         </form>      
-    
+                        <select id="categories-status" onchange="handleUserStatusChangeCate()">
+                            <option value="active">Hoạt động</option>
+                            <option value="inactive">Đã xóa</option>
+                        </select>
                         <button id="btn-add-category" class="btn-control-large" onclick="openCreateCategory()"><i class="material-symbols-outlined">
                             add
                             </i> <span>Thêm thể loại</span></button>          
@@ -512,7 +512,10 @@
                     
                     <div class="admin-control-right">
                         </form>      
-    
+                        <select id="discount-status" onchange="handleUserStatusChangeDiscount()">
+                            <option value="active">Hoạt động</option>
+                            <option value="inactive">Hết hạn</option>
+                        </select>
                         <button id="btn-add-user" class="btn-control-large" onclick="openCreateDiscount()"><i class="material-symbols-outlined">
                             add
                             </i> <span>Thêm mã giảm giá</span></button>          
@@ -580,6 +583,12 @@
 
                     <div class="admin-control-right">
                         </form>      
+
+                        <select id="author-status" onchange="handleUserStatusChangeAuthor()">
+                            <option value="active">Hoạt động</option>
+                            <option value="inactive">Đã xóa</option>
+                        </select>
+
                         <button id="btn-add-author" class="btn-control-large" onclick="openCreateAuthor()"><i class="material-symbols-outlined">
                             add
                             </i> <span>Thêm tác giả</span></button>          
@@ -814,7 +823,7 @@
         </div>
     </div>
 
-<!-- THEM NHA XUAT BAN VA SUA NHA XUAT BAN -->
+<!-- THEM NHA cc VA SUA NHA cc -->
 
     <div class="modal signup-supplier">
         <div class="modal-container">
@@ -829,13 +838,16 @@
                     <div class="form-group">
                         <label for="fullname-ncc" class="form-label">Tên đầy đủ</label>
                         <input id="fullname-ncc" name="fullname-ncc" type="text" placeholder="VD: ABCD" class="form-control">
-
+                        <span id="error-name"></span>
+                        <br>
                         <label for="email-ncc" class="form-label">Email</label>
                         <input id="email-ncc" name="email-ncc" type="text" placeholder="VD: nhacungcap@gmail.com" class="form-control">
-
+                        <span id="error-email"></span>
+                        <br>
                         <label for="sdt-ncc" class="form-label">Số điện thoại</label>
                         <input id="sdt-ncc" name="sdt-ncc" type="text" placeholder="VD: 0987654321" class="form-control">
-
+                        <span id="error-sdt"></span>
+                        <br>
                         <span class="form-message-name form-message"></span>
                     </div>
 
@@ -873,10 +885,10 @@
                         <input id="loai-km" name="loai-km" type="text" placeholder="VD: PR" class="form-control">
 
                         <label for="start-km" class="form-label">Ngày bắt đầu</label>
-                        <input id="start-km" name="start-km" type="text" placeholder="VD: 2024-2-10" class="form-control">
+                        <input id="start-km" name="start-km" type="date" placeholder="VD: 2024-2-10" class="form-control">
 
                         <label for="end-km" class="form-label">Ngày kết thúc</label>
-                        <input id="end-km" name="end-km" type="text" placeholder="VD: 2024-3-10" class="form-control">
+                        <input id="end-km" name="end-km" type="date" placeholder="VD: 2024-3-10" class="form-control">
 
                         <span class="form-message-name form-message"></span>
                     </div>
@@ -943,23 +955,25 @@
                     <br>
                     <label for="up-hinh-anh-user" class="form-label form-label-file-user">Chọn hình ảnh</label>
                     <input accept="image/jpeg, image/png, image/jpg" id="up-hinh-anh-user" name="up-hinh-anh-category" type="file" placeholder="Mã base 64 của hình ảnh" class="form-control">
+                    <span id="error-image"></span>
                     <br>
+
                     <br>
                     <label for="fullname-user" class="form-label">Họ và tên</label>
                     <input id="fullname-user" name="fullname-user" type="text" placeholder="VD: ABCD" class="form-control">
-                    
+                    <span id="error-name"></span>
                     <br>
                     <label for="address-user" class="form-label address-user">Địa chỉ</label>
                     <input id="address-user" name="address-user" type="text"  placeholder="VD: ABCD" class="form-control">
-                    
+                    <span id="error-address"></span>
                     <br>
                     <label for="email-user" class="form-label email-user">Email</label>
                     <input id="email-user" name="email-user" type="text"  placeholder="VD: ABCD" class="form-control">
-                    
+                    <span id="error-email"></span>
                     <br>
-                    <label for="sdt-user" class="form-label sdt-user">Họ và tên</label>
+                    <label for="sdt-user" class="form-label sdt-user">Số điện thoại</label>
                     <input id="sdt-user" name="sdt-user" type="text"  placeholder="VD: ABCD" class="form-control">
-                    
+                    <span id="error-phone-number"></span>
                  
                     <span class="form-message-name form-message"></span>
                 </div>
@@ -1015,8 +1029,8 @@
             <form action="" class="signup-pass-form">
                 <div class="form-group">
                     <label for="password-input" class="form-label">Mật khẩu mới</label>
-                    <input id="password-input" name="password-input" type="text" placeholder="VD: ABCD" class="form-control">
-
+                    <input id="password-input" name="password-input" type="password" placeholder="VD: ABCD" class="form-control">
+                    <span id="error-pass"></span>
                     <span class="form-message-name form-message"></span>
                 </div>
 
@@ -1045,8 +1059,12 @@
                     <label for="email-input" class="form-label">Email</label>
                     <input id="email-input" name="email-input" type="text" placeholder="VD: ABCD" class="form-control">
 
+                    <span id="error-text"></span>
+
                     <label for="pass-input" class="form-label">Mật khẩu</label>
-                    <input id="pass-input" name="pass-input" type="text" placeholder="VD: ABCD" class="form-control">
+                    <input id="pass-input" name="pass-input" type="password" placeholder="VD: ABCD" class="form-control">
+                    
+                    <span id="error-pass"></span>
 
                     <span class="form-message-name form-message"></span>
                 </div>
@@ -1091,7 +1109,7 @@
                     
                     
                     <div id="additional_entry_slip_details"></div>
-                    
+                    <span id="errorMessage" style="color: red;"></span>
                     <button class="btn-add-entry-slip-details" onclick="addEntrySlipDetailsField(event)">
                         <i class="material-symbols-outlined">add</i>
                         
