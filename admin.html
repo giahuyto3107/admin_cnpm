@@ -339,45 +339,20 @@
             <!-- thong ke -->
             <div class="section">
                 <div class="admin-control">
-                    <div class="admin-control-left">
-                        <select name="the-loai-tk" id="the-loai-tk" onchange="thongKe()">
-                            <option>Tất cả</option>
-                            <option>Nike</option>
-                            <option>Jordan</option>
-                            <option>Adidas</option>
-                            <option>Converse</option>
-                            <option>Vans</option>
-                            <option>Khác</option>
-                        </select>
-                    </div>
-                    <div class="admin-control-center">
-                        <form action="" class="form-search">
-                            <span class="search-btn"><i class="material-symbols-outlined">
-                                search
-                                </i></i></span>
-                            <input id="form-search-tk" type="text" class="form-search-input" placeholder="Tìm kiếm tên sản phẩm..." oninput="thongKe()">
-                        </form>
-                    </div>
                     <div class="admin-control-right">
                         <form action="" class="fillter-date">
                             <div>
                                 <label for="time-start">Từ</label>
-                                <input type="date" class="form-control-date" id="time-start-tk" onchange="thongKe()">
+                                <input type="date" class="form-control-date" id="start-tk" >
                             </div>
                             <div>
                                 <label for="time-end">Đến</label>
-                                <input type="date" class="form-control-date" id="time-end-tk" onchange="thongKe()">
+                                <input type="date" class="form-control-date" id="end-tk">
                             </div>
                         </form> 
-                        <button class="btn-reset-order" onclick="thongKe(1)"><i class="material-symbols-outlined">
-                            arrow_upward
+                        <button id="btnShowThongKe" class="btn-control-large"><i class="material-symbols-outlined">
+                            search
                             </i></button>
-                        <button class="btn-reset-order" onclick="thongKe(2)"><i class="material-symbols-outlined">
-                            arrow_downward
-                            </i></button>
-                        <button class="btn-reset-order" onclick="thongKe(0)"><i class="material-symbols-outlined">
-                            restart_alt
-                            </i></button>                    
                     </div>
                 </div>
                 <div class="order-statistical" id="order-statistical">
@@ -394,7 +369,7 @@
                     </div>
                     <div class="order-statistical-item">
                         <div class="order-statistical-item-content">
-                            <p class="order-statistical-item-content-desc">Số lượng bán ra</p>
+                            <p class="order-statistical-item-content-desc">Số lượng đơn hàng bán ra</p>
                             <h4 class="order-statistical-item-content-h" id="quantity-order"></h4>
                         </div>
                         <div class="order-statistical-item-icon">
@@ -420,17 +395,24 @@
                     <table width="100%">
                         <thead>
                             <tr>
-                                <td>STT</td>
                                 <td>Tên sản phẩm</td>
-                                <td>Số lượng bán</td>
+                                <td>Số lượng đã bán</td>
                                 <td>Doanh thu</td>
-                                <td></td>
                             </tr>
                         </thead>
                         <tbody id="showTk">
                         </tbody>
                     </table>
                 </div>
+                 <!--Chart-->
+                 <!-- <div class="graphBox">
+                    <div class="box">
+                        <canvas id="myChart" ></canvas>
+                    </div>
+                    <div class="box2">
+                        <canvas id="myChart2" ></canvas>
+                    </div>
+                </div> -->
             </div>
             </div>
 
@@ -827,7 +809,7 @@
 
     <div class="modal signup-supplier">
         <div class="modal-container">
-            <h3 class="modal-container-title add-supplier-e">THÊM NHÀ XUẤT BẢN MỚI</h3>
+            <h3 class="modal-container-title add-supplier-e">THÊM NHÀ CUNG CẤP MỚI</h3>
             <h3 class="modal-container-title edit-supplier-e">CHỈNH SỬA THÔNG TIN</h3>
             <button class="modal-close"><i class="material-symbols-outlined">
                 close
@@ -1133,7 +1115,7 @@
 <div class="modal signup-detail-entry">
     <div class="modal-container">
         <h3 class="modal-container-title add-detail-entry-e">THÊM TÀI KHOẢN</h3>
-        <h3 class="modal-container-title edit-detail-entry-e">CHỈNH SỬA THÔNG TIN</h3>
+        <h3 class="modal-container-title edit-detail-entry-e">CHI TIẾT PHIẾU NHẬP</h3>
         <button class="modal-close"><i class="material-symbols-outlined">
             close
             </i></button>

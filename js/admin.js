@@ -24,38 +24,31 @@ function login() {
   // function refreshToken() {
   //   const refreshToken = localStorage.getItem('refreshToken');
   
-  //   // Kiểm tra xem có refreshToken trong localStorage hay không
-  //   if (!refreshToken) {
-  //     console.error('refreshToken not found in localStorage');
-  //     return;
-  //   }
-  
-  //   fetch('http://localhost:8080/api/v1/users/refresh-token', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({ refreshToken }),
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       if (data.success) {
-  //         const accessToken = data.content.access_token;
-  //         // Lưu accessToken mới vào localStorage
-  //         localStorage.setItem('accessToken', accessToken);
-  //         console.log('Token refreshed successfully');
-  //       } else {
-  //         console.error('Token refresh failed:', data.message);
-  //       }
+  //   if (refreshToken) {
+  //     fetch('http://localhost:8080/api/v1/users/refresh-token', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         token:refreshToken,
+  //       },
   //     })
-  //     .catch(error => {
-  //       console.error('Error refreshing token:', error);
-  //     });
+  //       .then(response => response.json())
+  //       .then(data => {
+  //         const newAccessToken = data.content.access_token;
+  //         // LƯU ACCESS TOKEN MỚI VÀO LOCAL STORAGE
+  //         localStorage.setItem('accessToken', newAccessToken);
+  //         console.log('New Access Token:', newAccessToken);
+  //       })
+  //       .catch(error => {
+  //         console.error('Token refresh failed:', error);
+  //       });
+  //   } else {
+  //     console.log('Refresh Token not found in localStorage.');
+  //   }
   // }
-
-
-  // refreshToken();
-
+  // // Gọi hàm refreshToken mỗi 30 giây
+  // setInterval(refreshToken, 5000);
+  
 
 $(".menu-btn").click(function(){
     $(".sidebar").toggleClass("active");
@@ -1053,150 +1046,341 @@ function cancelSearchOrder(){
 
 // Create Object Thong ke
 function createObj() {
-    let orders = localStorage.getItem("order") ? JSON.parse(localStorage.getItem("order")) : [];
-    let products = localStorage.getItem("products") ? JSON.parse(localStorage.getItem("products")) : []; 
-    let orderDetails = localStorage.getItem("orderDetails") ? JSON.parse(localStorage.getItem("orderDetails")) : []; 
-    let result = [];
-    orderDetails.forEach(item => {
-        // Lấy thông tin sản phẩm
-        let prod = products.find(product => {return product.id == item.id;});
-        let obj = new Object();
-        obj.id = item.id;
-        obj.madon = item.madon;
-        obj.price = item.price;
-        obj.quantity = item.soluong;
-        obj.category = prod.category;
-        obj.title = prod.title;
-        obj.img = prod.img;
-        obj.time = (orders.find(order => order.id == item.madon)).thoigiandat;
-        result.push(obj);
-    });
-    return result;
+  let orders = localStorage.getItem("order") ? JSON.parse(localStorage.getItem("order")) : [];
+  let products = localStorage.getItem("products") ? JSON.parse(localStorage.getItem("products")) : []; 
+  let orderDetails = localStorage.getItem("orderDetails") ? JSON.parse(localStorage.getItem("orderDetails")) : []; 
+  let result = [];
+  orderDetails.forEach(item => {
+      // Lấy thông tin sản phẩm
+      let prod = products.find(product => {return product.id == item.id;});
+      let obj = new Object();
+      obj.id = item.id;
+      obj.madon = item.madon;
+      obj.price = item.price;
+      obj.quantity = item.soluong;
+      obj.category = prod.category;
+      obj.title = prod.title;
+      obj.img = prod.img;
+      obj.time = (orders.find(order => order.id == item.madon)).thoigiandat;
+      result.push(obj);
+  });
+  return result;
 }
 
 // Filter 
 function thongKe(mode) {
-    let categoryTk = document.getElementById("the-loai-tk").value;
-    let ct = document.getElementById("form-search-tk").value;
-    let timeStart = document.getElementById("time-start-tk").value;
-    let timeEnd = document.getElementById("time-end-tk").value;
-    if (timeEnd < timeStart && timeEnd != "" && timeStart != "") {
-        alert("Lựa chọn thời gian sai !");
-        return;
-    }
-    let arrDetail = createObj();
-    let result = categoryTk == "Tất cả" ? arrDetail : arrDetail.filter((item) => {
-        return item.category == categoryTk;
-    });
+  let categoryTk = document.getElementById("the-loai-tk").value;
+  let ct = document.getElementById("form-search-tk").value;
+  let timeStart = document.getElementById("time-start-tk").value;
+  let timeEnd = document.getElementById("time-end-tk").value;
+  if (timeEnd < timeStart && timeEnd != "" && timeStart != "") {
+      alert("Lựa chọn thời gian sai !");
+      return;
+  }
+  let arrDetail = createObj();
+  let result = categoryTk == "Tất cả" ? arrDetail : arrDetail.filter((item) => {
+      return item.category == categoryTk;
+  });
 
-    result = ct == "" ? result : result.filter((item) => {
-        return (item.title.toLowerCase().includes(ct.toLowerCase()));
-    });
+  result = ct == "" ? result : result.filter((item) => {
+      return (item.title.toLowerCase().includes(ct.toLowerCase()));
+  });
 
-    if (timeStart != "" && timeEnd == "") {
-        result = result.filter((item) => {
-            return new Date(item.time) > new Date(timeStart).setHours(0, 0, 0);
-        });
-    } else if (timeStart == "" && timeEnd != "") {
-        result = result.filter((item) => {
-            return new Date(item.time) < new Date(timeEnd).setHours(23, 59, 59);
-        });
-    } else if (timeStart != "" && timeEnd != "") {
-        result = result.filter((item) => {
-            return (new Date(item.time) > new Date(timeStart).setHours(0, 0, 0) && new Date(item.time) < new Date(timeEnd).setHours(23, 59, 59)
-            );
-        });
-    }    
-    showThongKe(result,mode);
+  if (timeStart != "" && timeEnd == "") {
+      result = result.filter((item) => {
+          return new Date(item.time) > new Date(timeStart).setHours(0, 0, 0);
+      });
+  } else if (timeStart == "" && timeEnd != "") {
+      result = result.filter((item) => {
+          return new Date(item.time) < new Date(timeEnd).setHours(23, 59, 59);
+      });
+  } else if (timeStart != "" && timeEnd != "") {
+      result = result.filter((item) => {
+          return (new Date(item.time) > new Date(timeStart).setHours(0, 0, 0) && new Date(item.time) < new Date(timeEnd).setHours(23, 59, 59)
+          );
+      });
+  }    
+  showThongKe(result,mode);
 }
 
-// Show số lượng sp, số lượng đơn bán, doanh thu
-function showOverview(arr){
-    document.getElementById("quantity-product").innerText = arr.length;
-    document.getElementById("quantity-order").innerText = arr.reduce((sum, cur) => (sum + parseInt(cur.quantity)),0);
-    document.getElementById("quantity-sale").innerText = vnd(arr.reduce((sum, cur) => (sum + parseInt(cur.doanhthu)),0));
-}
+function showSaleDetail() {
+  const accessToken = localStorage.getItem('accessToken');
 
-function showThongKe(arr,mode) {
-    let orderHtml = "";
-    let mergeObj = mergeObjThongKe(arr);
-    showOverview(mergeObj);
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
 
-    switch (mode){
-        case 0:
-            mergeObj = mergeObjThongKe(createObj());
-            showOverview(mergeObj);
-            document.getElementById("the-loai-tk").value = "Tất cả";
-            document.getElementById("form-search-tk").value = "";
-            document.getElementById("time-start-tk").value = "";
-            document.getElementById("time-end-tk").value = "";
-            break;
-        case 1:
-            mergeObj.sort((a,b) => parseInt(a.quantity) - parseInt(b.quantity))
-            break;
-        case 2:
-            mergeObj.sort((a,b) => parseInt(b.quantity) - parseInt(a.quantity))
-            break;
-    }
-    for(let i = 0; i < mergeObj.length; i++) {
-        orderHtml += `
-        <tr>
-        <td>${i + 1}</td>
-        <td><div class="prod-img-title"><img class="prd-img-tbl" src="${mergeObj[i].img}" alt=""><p>${mergeObj[i].title}</p></div></td>
-        <td>${mergeObj[i].quantity}</td>
-        <td>${vnd(mergeObj[i].doanhthu)}</td>
-        <td><button class="btn-detail product-order-detail" data-id="${mergeObj[i].id}"><i class="material-symbols-outlined">
-        visibility
-        </i> Chi tiết</button></td>
-        </tr>      
-        `;
-    }
-    document.getElementById("showTk").innerHTML = orderHtml;
-    document.querySelectorAll(".product-order-detail").forEach(item => {
-        let idProduct = item.getAttribute("data-id");
-        item.addEventListener("click", () => {           
-            detailOrderProduct(arr,idProduct);
-        })
+  fetch('http://localhost:8080/api/v1/bill_details/', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.content);
+
+      // Initialize total revenue
+      let totalRevenue = 0;
+
+      // Count total revenue
+      data.content.forEach(billDetail => {
+        totalRevenue += billDetail.quantity * billDetail.price;
+      });
+
+      // Update the quantity-sale element
+      const quantitySaleElement = document.getElementById('quantity-sale');
+      quantitySaleElement.textContent = vnd(totalRevenue) // Format to currency
+
+      // ... Rest of the code (displaying table, chart, etc.)
     })
-}
-
-showThongKe(createObj())
-
-function mergeObjThongKe(arr) {
-    let result = [];
-    arr.forEach(item => {
-        let check = result.find(i => i.id == item.id) // Không tìm thấy gì trả về undefined
-
-        if(check){
-            check.quantity = parseInt(check.quantity)  + parseInt(item.quantity);
-            check.doanhthu += parseInt(item.price) * parseInt(item.quantity);
-        } else {
-            const newItem = {...item}
-            newItem.doanhthu = newItem.price * newItem.quantity;
-            result.push(newItem);
-        }
-        
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
     });
-    return result;
 }
 
-function detailOrderProduct(arr,id) {
-    let orderHtml = "";
-    arr.forEach(item => {
-        if(item.id == id) {
-            orderHtml += `<tr>
-            <td>${item.madon}</td>
-            <td>${item.quantity}</td>
-            <td>${vnd(item.price)}</td>
-            <td>${formatDate(item.time)}</td>
-            </tr>      
-            `;
-        }
+showSaleDetail();
+
+
+function showProductDetail() {
+  const accessToken = localStorage.getItem('accessToken');
+
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  fetch('http://localhost:8080/api/v1/bill_details/', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.content);
+
+      // Initialize total quantity
+      let totalQuantitySold = 0;
+
+      // Count total quantity sold
+      data.content.forEach(billDetail => {
+        totalQuantitySold += billDetail.quantity;
+      });
+
+      // Update the quantity-product element
+      const quantityProductElement = document.getElementById('quantity-product');
+      quantityProductElement.textContent = totalQuantitySold;
+
+      // ... Rest of the code (displaying table, chart, etc.)
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
     });
-    document.getElementById("show-product-order-detail").innerHTML = orderHtml
-    document.querySelector(".modal.detail-order-product").classList.add("open")
 }
 
+showProductDetail();
+
+function showBillDetail() {
+  const accessToken = localStorage.getItem('accessToken');
+
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  fetch('http://localhost:8080/api/v1/bill_details/', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.content);
+
+
+      // Initialize maximum bill ID
+      let maxBillID = 0;
+
+      // Find the largest bill ID
+      data.content.forEach(bill => {
+        if (bill.bill_id > maxBillID) {
+          maxBillID = bill.bill_id;
+        }
+      });
+      // Update the quantity-order element
+      const quantityOrderElement = document.getElementById('quantity-order');
+      quantityOrderElement.textContent = maxBillID;
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+    });
+}
+
+showBillDetail();
+
+const button = document.getElementById('btnShowThongKe');
+button.addEventListener('click', function() {
+  const startDate = document.getElementById('start-tk').value;
+  const endDate = document.getElementById('end-tk').value;
+  showThongKeDetail(startDate, endDate);
+});
+
+function showThongKeDetail(startDate, endDate) {
+  const accessToken = localStorage.getItem('accessToken');
+
+  // Kiểm tra xem có token trong localStorage hay không
+  if (!accessToken) {
+    console.error('Token not found in localStorage');
+    return;
+  }
+
+  fetch(`http://localhost:8080/api/v1/bill_details?date_start=${startDate}&date_end=${endDate}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      token: accessToken,
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.content);
+
+      const productData = {}; // Object to store product details
+
+      data.content.forEach(item => {
+        // Update product data
+        if (!productData[item.product_id]) {
+          productData[item.product_id] = {
+            name: item.name, // Assuming "name" exists in the data
+            price: item.price,
+            quantity: 0,
+            totalRevenue: 0, // Add totalRevenue property
+          };
+        }
+        productData[item.product_id].quantity += item.quantity;
+        productData[item.product_id].totalRevenue += item.price * item.quantity; // Calculate totalRevenue
+      });
+
+      // Get the table body element
+      const tableBody = document.getElementById('showTk');
+
+      // Clear existing table content (optional)
+      tableBody.innerHTML = ''; // This removes existing rows
+
+      // Create and display product summary rows
+      for (const productId in productData) {
+        const row = tableBody.insertRow();
+        const product = productData[productId];
+
+        const nameCell = row.insertCell();
+        nameCell.textContent = product.name;
+
+        const quantityCell = row.insertCell();
+        quantityCell.textContent = product.quantity;
+
+        const revenueCell = row.insertCell();
+        revenueCell.textContent = vnd(product.totalRevenue); // Display totalRevenue
+      }
+    })
+    .catch(error => {
+      console.error('Failed to fetch data:', error);
+    });
+}
+
+showThongKeDetail();
+
+// // Show số lượng sp, số lượng đơn bán, doanh thu
+// function showOverview(arr){
+// }
+
+// function showThongKe(arr,mode) {
+//   let orderHtml = "";
+//   let mergeObj = mergeObjThongKe(arr);
+//   showOverview(mergeObj);
+
+//   switch (mode){
+//       case 0:
+//           mergeObj = mergeObjThongKe(createObj());
+//           showOverview(mergeObj);
+//           document.getElementById("the-loai-tk").value = "Tất cả";
+//           document.getElementById("form-search-tk").value = "";
+//           document.getElementById("time-start-tk").value = "";
+//           document.getElementById("time-end-tk").value = "";
+//           break;
+//       case 1:
+//           mergeObj.sort((a,b) => parseInt(a.quantity) - parseInt(b.quantity))
+//           break;
+//       case 2:
+//           mergeObj.sort((a,b) => parseInt(b.quantity) - parseInt(a.quantity))
+//           break;
+//   }
+//   for(let i = 0; i < mergeObj.length; i++) {
+//       orderHtml += `
+//       <tr>
+//       <td>${i + 1}</td>
+//       <td><div class="prod-img-title"><img class="prd-img-tbl" src="${mergeObj[i].img}" alt=""><p>${mergeObj[i].title}</p></div></td>
+//       <td>${mergeObj[i].quantity}</td>
+//       <td>${vnd(mergeObj[i].doanhthu)}</td>
+//       <td><button class="btn-detail product-order-detail" data-id="${mergeObj[i].id}"><i class="material-symbols-outlined">
+//       visibility
+//       </i> Chi tiết</button></td>
+//       </tr>      
+//       `;
+//   }
+//   document.getElementById("showTk").innerHTML = orderHtml;
+//   document.querySelectorAll(".product-order-detail").forEach(item => {
+//       let idProduct = item.getAttribute("data-id");
+//       item.addEventListener("click", () => {           
+//           detailOrderProduct(arr,idProduct);
+//       })
+//   })
+// }
+
+// showThongKe(createObj())
+
+// function mergeObjThongKe(arr) {
+//   let result = [];
+//   arr.forEach(item => {
+//       let check = result.find(i => i.id == item.id) // Không tìm thấy gì trả về undefined
+
+//       if(check){
+//           check.quantity = parseInt(check.quantity)  + parseInt(item.quantity);
+//           check.doanhthu += parseInt(item.price) * parseInt(item.quantity);
+//       } else {
+//           const newItem = {...item}
+//           newItem.doanhthu = newItem.price * newItem.quantity;
+//           result.push(newItem);
+//       }
+      
+//   });
+//   return result;
+// }
+
+// function detailOrderProduct(arr,id) {
+//   let orderHtml = "";
+//   arr.forEach(item => {
+//       if(item.id == id) {
+//           orderHtml += `<tr>
+//           <td>${item.madon}</td>
+//           <td>${item.quantity}</td>
+//           <td>${vnd(item.price)}</td>
+//           <td>${formatDate(item.time)}</td>
+//           </tr>      
+//           `;
+//       }
+//   });
+//   document.getElementById("show-product-order-detail").innerHTML = orderHtml
+//   document.querySelector(".modal.detail-order-product").classList.add("open")
+// }
 
 
 // TAI KHOAN
@@ -2506,7 +2690,7 @@ function showEntryArr(arr) {
 ;
           entryHtml += ` <tr>
           <td>${entry.id}</td>
-          <td>${entry.staff_id}</td>
+          <td>${entry.staff_name}</td>
           <td>${entry.supplier_name}</td>
           <td>${formattedDate(entry.date_entry)}</td>
           <td>${vnd(entry.total_price)}</td>
@@ -2530,8 +2714,8 @@ function showDetailEntryArr(arr) {
           let tinhtrang = entry.status == 0 ? `<span class="status-no-complete">Bị khóa</span>` : `<span class="status-complete">Hoạt động</span>`;
 ;
           entryHtml += ` <tr>
-          <td>${entry.product_id}</td>
-          <td>${entry.entry_price}</td>
+          <td>${entry.product_name}</td>
+          <td>${vnd(entry.entry_price)}</td>
           <td>${entry.quantity}</td>
       </tr>`;
       });
